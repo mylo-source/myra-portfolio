@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invisible Needs, Visible Risk — Myra Manekia</title>
+<meta name="description" content="A service design study reframing allergen safety in hospitality as a coordination problem. ArtCenter MDes · Interaction Design Studio · Fall 2025.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   DESIGN TOKENS — locked to portfolio system
+   ============================================================ */
+:root {
+  --bg:           #FAF7F2;
+  --bg-subtle:    #F2EDE5;
+  --text:         #1A1814;
+  --text-muted:   #6B655C;
+  --accent:       #8B3A2E;
+  --accent-dark:  #6F2D24;
+  --border:       #E5DFD4;
+
+  --font-serif:   'Fraunces', Georgia, serif;
+  --font-sans:    'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --space-1: 4px; --space-2: 8px; --space-3: 16px; --space-4: 24px;
+  --space-5: 32px; --space-6: 48px; --space-7: 64px; --space-8: 96px; --space-9: 128px;
+
+  --col-text:      720px;
+  --col-media:     880px;
+  --col-wide:      1080px;
+  --container-max: 1200px;
+
+  --ease:      cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-calm: cubic-bezier(0.16, 1, 0.3, 1);
+  --breath:    5s;
+}
+
+/* ============================================================
+   RESET
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+
+/* ============================================================
+   LAYOUT COLUMNS
+   ============================================================ */
+.col-text  { max-width: var(--col-text);  margin: 0 auto; padding: 0 var(--space-4); }
+.col-media { max-width: var(--col-media); margin: 0 auto; padding: 0 var(--space-4); }
+.col-wide  { max-width: var(--col-wide);  margin: 0 auto; padding: 0 var(--space-4); }
+@media (min-width: 768px) {
+  .col-text, .col-media, .col-wide { padding: 0 var(--space-6); }
+}
+
+/* ============================================================
+   NAV — matches sixsenses.html / justfixit.html exactly
+   ============================================================ */
+.nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  background: var(--bg);
+  z-index: 100;
+  padding: var(--space-3) 0;
+  transition: box-shadow 0.5s var(--ease-calm), padding 0.4s var(--ease-calm);
+}
+.nav.scrolled { box-shadow: 0 1px 0 var(--border); padding: var(--space-2) 0; }
+.nav-inner {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+  display: flex; justify-content: space-between; align-items: center;
+}
+@media (min-width: 768px) { .nav-inner { padding: 0 var(--space-6); } }
+.nav-logo {
+  font-family: var(--font-serif); font-size: 22px; font-weight: 500;
+  letter-spacing: 0.01em; position: relative; padding: 4px 0;
+  transition: color 0.8s var(--ease-calm);
+}
+.nav-logo::after {
+  content: ''; position: absolute; inset: auto 0 0 0;
+  height: 1px; background: currentColor;
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 1.2s var(--ease-calm);
+}
+.nav-logo:hover { color: var(--accent); }
+.nav-logo:hover::after { transform: scaleX(1); }
+.nav-links { display: flex; gap: var(--space-5); }
+@media (min-width: 768px) { .nav-links { gap: var(--space-6); } }
+.nav-links a {
+  font-size: 15px; position: relative; padding: 4px 0;
+  transition: color 0.8s var(--ease-calm);
+}
+.nav-links a::after {
+  content: ''; position: absolute; inset: auto 0 0 0;
+  height: 1px; background: currentColor;
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 1.2s var(--ease-calm);
+}
+.nav-links a:hover { color: var(--accent); }
+.nav-links a:hover::after { transform: scaleX(1); }
+
+/* ============================================================
+   BREATHING ANIMATIONS
+   ============================================================ */
+@keyframes breath-subtle {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 1; }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   PAGE TOP — breathing back link, matches other pages
+   ============================================================ */
+.page-top {
+  padding-top: clamp(90px, 11vh, 130px);
+  padding-bottom: 0;
+}
+.back-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 13px;
+  color: var(--text-muted);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 56px;
+  transition: color 0.8s var(--ease-calm), gap 0.8s var(--ease-calm);
+  opacity: 0;
+  animation:
+    fadeUp 1.2s var(--ease-calm) 0.2s forwards,
+    breath-subtle var(--breath) ease-in-out 1.6s infinite;
+}
+.back-link:hover { color: var(--accent); gap: 12px; animation-play-state: paused; opacity: 1; }
+.back-link .arrow { display: inline-block; transition: transform 0.8s var(--ease-calm); }
+.back-link:hover .arrow { transform: translateX(-3px); }
+
+/* ============================================================
+   HERO — centered, matches JFI + SS patterns
+   ============================================================ */
+.hero {
+  padding: var(--space-5) 0 var(--space-9);
+  text-align: center;
+}
+.hero-title {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(40px, 5.5vw + 14px, 76px);
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  font-variation-settings: 'opsz' 96;
+  color: var(--text);
+  opacity: 0;
+  animation: fadeUp 1.3s var(--ease-calm) 0.3s forwards;
+}
+.hero-sub {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(20px, 1.5vw + 12px, 26px);
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  color: var(--text-muted);
+  margin-top: var(--space-5);
+  max-width: 620px;
+  margin-left: auto;
+  margin-right: auto;
+  opacity: 0;
+  animation: fadeUp 1.4s var(--ease-calm) 0.85s forwards;
+}
+
+/* ============================================================
+   DESIGNED SILENCE
+   ============================================================ */
+.silence {
+  position: relative;
+  height: 220px;
+  pointer-events: none;
+}
+.silence::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.4;
+}
+@media (max-width: 720px) { .silence { height: 140px; } }
+
+/* ============================================================
+   SHARED PRIMITIVES
+   ============================================================ */
+.section-label {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: var(--space-5);
+}
+.meta-line {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: var(--space-5);
+}
+.cross-link-note {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin-bottom: var(--space-8);
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--border);
+}
+.cross-link-note a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: color 0.4s var(--ease);
+}
+.cross-link-note a:hover { color: var(--accent-dark); }
+.prose p {
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--text-muted);
+  margin-bottom: var(--space-4);
+}
+.prose p:last-child { margin-bottom: 0; }
+.prose em {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 500;
+  color: var(--text);
+  font-size: 1.02em;
+}
+
+/* ============================================================
+   THE MORNING — narrative + the "Until..." crumble turn
+   ============================================================ */
+.morning-prose { margin-top: var(--space-3); }
+
+/* The narrative turn — "It all sounds lovely" / "Until..."
+   Each character of "lovely" is wrapped in a span by JS so it can
+   crumble (translateY + rotate + fade) when "Until..." appears. */
+.morning-turn {
+  margin: var(--space-9) auto;
+  text-align: center;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-variation-settings: 'opsz' 80;
+  color: var(--text);
+}
+.line-lovely {
+  font-size: clamp(32px, 3.5vw + 12px, 50px);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  display: block;
+  opacity: 0;
+  transition: opacity 1.4s var(--ease-calm);
+}
+.morning-turn.visible .line-lovely { opacity: 1; }
+
+.line-lovely .ch {
+  display: inline-block;
+  transition:
+    opacity 0.4s cubic-bezier(0.4, 0, 1, 1),
+    transform 0.7s cubic-bezier(0.16, 0.85, 0.35, 1);
+  will-change: transform, opacity;
+}
+.morning-turn.crumbled .line-lovely .ch {
+  opacity: 0;
+  transform:
+    translate(var(--tx, 0), var(--ty, 100px))
+    rotate(var(--r, 0deg));
+}
+
+.line-until {
+  display: block;
+  margin-top: var(--space-5);
+  font-size: clamp(40px, 4.5vw + 14px, 64px);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  color: var(--accent);
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 1.8s var(--ease-calm) 1.6s,
+    transform 1.8s var(--ease-calm) 1.6s;
+}
+.morning-turn.visible .line-until {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Pullquote — "Does this have nuts in it?" */
+.question-pull {
+  margin: var(--space-9) auto;
+  max-width: 720px;
+  text-align: center;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(28px, 3vw + 12px, 44px);
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  color: var(--text);
+  font-variation-settings: 'opsz' 72;
+}
+.question-pull::before {
+  content: '“';
+  display: block;
+  font-size: 0.6em;
+  color: var(--accent);
+  margin-bottom: var(--space-2);
+  line-height: 1;
+}
+.question-pull::after {
+  content: '”';
+  display: inline-block;
+  font-size: 1em;
+  color: var(--text);
+  line-height: 1;
+}
+
+/* ============================================================
+   THROAT-STACK — "The kind that closes throats."
+   Three lines that build sequentially, the last landing with
+   the most weight. The emotional pivot of the case study.
+   ============================================================ */
+.throat-stack {
+  text-align: center;
+  margin: var(--space-9) auto;
+  max-width: 720px;
+  padding: 0 var(--space-4);
+  font-family: var(--font-serif);
+}
+.throat-stack .ln {
+  display: block;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 1.2s var(--ease-calm), transform 1.2s var(--ease-calm);
+}
+.throat-stack.visible .ln { opacity: 1; transform: translateY(0); }
+.throat-stack .ln-1 {
+  font-size: clamp(20px, 1.5vw + 12px, 26px);
+  font-style: italic;
+  color: var(--text);
+  line-height: 1.5;
+  transition-delay: 0s;
+}
+.throat-stack .ln-2 {
+  font-size: clamp(18px, 1vw + 12px, 22px);
+  font-style: italic;
+  color: var(--text-muted);
+  margin-top: var(--space-3);
+  line-height: 1.5;
+  transition-delay: 1.0s;
+}
+.throat-stack .ln-3 {
+  font-size: clamp(34px, 3.5vw + 14px, 52px);
+  font-style: italic;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  font-variation-settings: 'opsz' 72;
+  margin-top: var(--space-5);
+  transition-delay: 2.2s;
+}
+
+/* ============================================================
+   SPREAD-WORDS — "last few feet" drift apart on reveal.
+   Enacts the metaphor: the information failed to cross
+   the last few feet, and the words themselves separate.
+   ============================================================ */
+.spread-words {
+  transition: word-spacing 2.0s var(--ease-calm), letter-spacing 2.0s var(--ease-calm);
+  word-spacing: 0;
+}
+.spread-words.visible {
+  word-spacing: 0.7em;
+}
+
+/* Morning user journey image */
+.morning-journey {
+  margin: var(--space-8) auto;
+  max-width: var(--col-wide);
+  padding: 0 var(--space-4);
+}
+@media (min-width: 768px) { .morning-journey { padding: 0 var(--space-6); } }
+.morning-journey img {
+  width: 100%; height: auto;
+  display: block;
+  border-radius: 8px;
+  box-shadow: 0 24px 48px -28px rgba(26,24,20,0.18);
+}
+.morning-journey .figcap {
+  display: block;
+  margin-top: var(--space-3);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* ============================================================
+   RESEARCH — reversed 5/5 stat
+   ============================================================ */
+.research-stat {
+  margin: var(--space-8) auto;
+  max-width: 880px;
+  padding: 0 var(--space-4);
+  text-align: center;
+}
+.stat-number {
+  display: inline-block;
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: clamp(96px, 12vw, 160px);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--text);
+  font-variation-settings: 'opsz' 144;
+}
+/* Reversed reveal: /5 first, then the numerator 5 lands after */
+.stat-number .num {
+  opacity: 0;
+  display: inline-block;
+  transition: opacity 1.1s var(--ease-calm);
+}
+.stat-number .frac {
+  opacity: 0;
+  display: inline-block;
+  color: var(--text-muted);
+  transition: opacity 1.1s var(--ease-calm);
+}
+.research-stat.visible .stat-number .frac { opacity: 1; transition-delay: 0s; }
+.research-stat.visible .stat-number .num  { opacity: 1; transition-delay: 0.95s; }
+.stat-caption {
+  margin-top: var(--space-5);
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  max-width: 420px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+  opacity: 0;
+  transition: opacity 1s var(--ease-calm) 1.7s;
+}
+.research-stat.visible .stat-caption { opacity: 1; }
+
+/* Pull display + footer caption for "Allergens travel further than kitchens." */
+.research-pull-block {
+  margin: var(--space-9) auto;
+  max-width: 880px;
+  padding: 0 var(--space-4);
+  text-align: left;
+}
+.research-pull-block .pull {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(34px, 4vw + 12px, 56px);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  font-variation-settings: 'opsz' 80;
+}
+.research-pull-block .footer-caption {
+  margin-top: var(--space-4);
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ============================================================
+   PULL DISPLAYS — section emphasis lines
+   ============================================================ */
+.pull-display {
+  margin: var(--space-9) auto;
+  text-align: center;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(34px, 4vw + 12px, 56px);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  font-variation-settings: 'opsz' 80;
+  max-width: 880px;
+  padding: 0 var(--space-4);
+}
+.pull-display .accent { color: var(--accent); }
+
+/* ============================================================
+   "I CHOSE HOUSEKEEPING" — surprise pull
+   Word-by-word reveal: "I", then "chose", then "housekeeping"
+   (longer pause before housekeeping — the decision lands).
+   A terracotta underline draws in beneath "housekeeping" after.
+   ============================================================ */
+.pull-decision {
+  margin: var(--space-8) auto;
+  text-align: center;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(36px, 4.5vw + 12px, 60px);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  font-variation-settings: 'opsz' 80;
+}
+.pull-decision .w {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 1.0s var(--ease-calm),
+    transform 1.0s var(--ease-calm);
+}
+.pull-decision.visible .w-1 { opacity: 1; transform: translateY(0); transition-delay: 0.2s; }
+.pull-decision.visible .w-2 { opacity: 1; transform: translateY(0); transition-delay: 0.65s; }
+.pull-decision .w-3 {
+  position: relative;
+  color: var(--accent);
+}
+.pull-decision.visible .w-3 { opacity: 1; transform: translateY(0); transition-delay: 1.4s; }
+.pull-decision .w-3::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: -6px;
+  width: 100%;
+  height: 3px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 1.1s var(--ease-calm);
+}
+.pull-decision.visible .w-3::after {
+  transform: scaleX(1);
+  transition-delay: 2.05s;
+}
+
+/* ============================================================
+   WATCHED vs UNWATCHED
+   ============================================================ */
+.watched-grid {
+  margin: var(--space-8) auto;
+  max-width: var(--col-media);
+  padding: 0 var(--space-4);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-7);
+}
+@media (max-width: 720px) {
+  .watched-grid { grid-template-columns: 1fr; gap: var(--space-6); }
+}
+.col-watched, .col-unwatched { position: relative; }
+.col-label {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-2);
+}
+.col-watched .col-label { color: var(--text); }
+.col-unwatched .col-label { color: var(--accent); }
+.col-sub {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: var(--space-5);
+}
+.col-list { list-style: none; padding: 0; margin: 0; }
+.col-list li {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  line-height: 1.5;
+  color: var(--text);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.9s var(--ease-calm), transform 0.9s var(--ease-calm);
+}
+.col-list li:last-child { border-bottom: none; }
+.watched-grid.visible .col-list li { opacity: 1; transform: translateY(0); }
+.col-watched .col-list li:nth-child(1) { transition-delay: 0.10s; }
+.col-watched .col-list li:nth-child(2) { transition-delay: 0.20s; }
+.col-watched .col-list li:nth-child(3) { transition-delay: 0.30s; }
+.col-unwatched .col-list li:nth-child(1) { transition-delay: 0.10s; }
+.col-unwatched .col-list li:nth-child(2) { transition-delay: 0.28s; }
+.col-unwatched .col-list li:nth-child(3) { transition-delay: 0.46s; }
+.col-unwatched .col-list li:nth-child(4) { transition-delay: 0.64s; }
+.col-unwatched .col-list li:nth-child(5) { transition-delay: 0.82s; }
+.watched-caption {
+  margin: var(--space-6) auto 0;
+  text-align: center;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* ============================================================
+   THE DESIGN — image + video both live here
+   ============================================================ */
+.design-figure {
+  margin: var(--space-7) auto;
+  max-width: 480px;
+  padding: 0 var(--space-4);
+}
+@media (min-width: 768px) { .design-figure { padding: 0 var(--space-6); } }
+.design-figure img {
+  width: 100%; height: auto;
+  display: block;
+  border-radius: 12px;
+  box-shadow: 0 30px 60px -30px rgba(26,24,20,0.22);
+}
+.figcap {
+  display: block;
+  margin-top: var(--space-4);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* Preparation flow video (inside The Design section) */
+.prep-flow {
+  margin: var(--space-7) auto;
+  text-align: center;
+  padding: 0 var(--space-4);
+}
+.prep-flow .media { max-width: 380px; margin: 0 auto; }
+.prep-flow .media img,
+.prep-flow .media video {
+  width: 100%; height: auto;
+  display: block;
+  border-radius: 18px;
+  box-shadow: 0 30px 60px -30px rgba(26,24,20,0.22);
+}
+
+/* ============================================================
+   REFLECTION
+   ============================================================ */
+.reflection {
+  background: var(--bg-subtle);
+  padding: var(--space-9) 0;
+  margin: var(--space-8) 0 0 0;
+}
+.reflection .prose p {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.8;
+}
+
+/* ============================================================
+   CLOSING FOUR-LINE BREAK — the centerpiece
+   ============================================================ */
+.closing {
+  padding: var(--space-9) 0 calc(var(--space-9) + var(--space-7));
+  text-align: center;
+}
+.closing-stack {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--text);
+  font-variation-settings: 'opsz' 96;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+}
+.closing-stack .ln {
+  display: block;
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 1.4s var(--ease-calm),
+    transform 1.4s var(--ease-calm);
+}
+.closing-stack.visible .ln { opacity: 1; transform: translateY(0); }
+.closing-stack .ln-1 {
+  font-size: clamp(48px, 7vw, 96px);
+  transition-delay: 0s;
+}
+.closing-stack .ln-2 {
+  font-size: clamp(28px, 3vw + 12px, 44px);
+  margin-top: var(--space-4);
+  color: var(--text-muted);
+  transition-delay: 1.0s;
+}
+.closing-stack .ln-3 {
+  font-size: clamp(48px, 7vw, 96px);
+  margin-top: var(--space-5);
+  transition-delay: 2.1s;
+}
+.closing-stack .ln-4 {
+  font-size: clamp(28px, 3vw + 12px, 44px);
+  margin-top: var(--space-4);
+  color: var(--text-muted);
+  transition-delay: 3.1s;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.footer {
+  background: var(--bg-subtle);
+  padding: var(--space-6) 0;
+  font-size: 14px;
+}
+.footer-inner {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+  display: flex; flex-direction: column;
+  gap: var(--space-3);
+  justify-content: space-between;
+}
+@media (min-width: 768px) {
+  .footer-inner { padding: 0 var(--space-6); flex-direction: row; align-items: center; }
+}
+.footer-left .name { font-weight: 500; margin-bottom: 2px; }
+.footer-left .copyright { color: var(--text-muted); font-size: 13px; }
+.footer-right { display: flex; gap: var(--space-5); flex-wrap: wrap; }
+.footer-right a {
+  color: var(--text); position: relative; padding: 2px 0;
+  transition: color 0.8s var(--ease-calm);
+}
+.footer-right a::after {
+  content: ''; position: absolute; inset: auto 0 0 0;
+  height: 1px; background: currentColor;
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 1.2s var(--ease-calm);
+}
+.footer-right a:hover { color: var(--accent); }
+.footer-right a:hover::after { transform: scaleX(1); }
+
+/* ============================================================
+   REVEAL OBSERVER
+   ============================================================ */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 1.2s var(--ease-calm),
+    transform 1.2s var(--ease-calm);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ============================================================
+   FOCUS + REDUCED MOTION
+   ============================================================ */
+*:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal, .morning-turn, .watched-grid, .research-stat, .closing-stack, .pull-decision, .throat-stack { opacity: 1 !important; transform: none !important; }
+  .line-lovely, .line-until, .closing-stack .ln, .col-list li, .pull-decision .w, .stat-number .num, .stat-number .frac, .stat-caption, .throat-stack .ln { opacity: 1 !important; transform: none !important; }
+  .pull-decision .w-3::after { transform: scaleX(1) !important; }
+  .back-link { animation: none; opacity: 1 !important; }
+}
+
+@media (max-width: 480px) {
+  body { font-size: 16px; }
+  .nav-logo { font-size: 20px; }
+  .nav-links a { font-size: 14px; }
+  .footer-right { gap: var(--space-4); }
+}
+</style>
+</head>
+
+<body>
+
+<!-- =========================================================
+     NAV
+     ========================================================= -->
+<nav class="nav" aria-label="Primary">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">MM</a>
+    <div class="nav-links">
+      <a href="about.html">About</a>
+      <a href="writing.html">Writing</a>
+    </div>
+  </div>
+</nav>
+
+<!-- =========================================================
+     PAGE TOP — breathing back link
+     ========================================================= -->
+<div class="page-top">
+  <div class="col-text">
+    <a href="index.html" class="back-link"><span class="arrow">←</span> Back to works</a>
+  </div>
+</div>
+
+<!-- =========================================================
+     HERO
+     ========================================================= -->
+<header class="hero">
+  <div class="col-text">
+    <h1 class="hero-title">Invisible Needs, Visible Risk</h1>
+    <p class="hero-sub">What Elena's stay looks like when the service can kill her.</p>
+  </div>
+</header>
+
+<div class="silence" aria-hidden="true"></div>
+
+<!-- =========================================================
+     META + CROSS-LINK TO SIX SENSES
+     ========================================================= -->
+<section>
+  <div class="col-text reveal">
+    <div class="meta-line">
+      ArtCenter MDes · Interaction Design Studio · Fall 2025 · Solo Project
+    </div>
+    <div class="cross-link-note">
+      This project extends a service design study set in the Six Senses ecosystem. If you haven't read the <a href="sixsenses.html">Six Senses Dashboard</a> case study yet, it introduces Elena and the wellness frame this project builds on.
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     THE MORNING
+     ========================================================= -->
+<section>
+  <div class="col-text reveal">
+    <div class="section-label">The Morning</div>
+    <div class="prose morning-prose">
+      <p>Elena is a wellness-oriented traveler. She comes to Six Senses for the things the brand is built around: quiet, restoration, a stay that anticipates her without asking. She has filled out the pre-arrival form, confirmed her preferences at check-in, and woken up the next morning in her villa ready for the kind of slow day the resort exists to offer her. She wakes early and requests a housekeeping service through her mobile dashboard before stepping out for a walk. While she's away, the staff refresh her villa, restock the amenities, and leave a small complimentary treat on her bedside table.</p>
+      <p>She returns, orders breakfast through the in-villa phone, eats, showers using the wellness amenities, and settles in for a mid-morning siesta — not forgetting to savor the treat that housekeeping left for her.</p>
+    </div>
+  </div>
+
+  <!-- The narrative turn — "lovely" crumbles when "Until..." appears -->
+  <div class="morning-turn" id="morningTurn">
+    <span class="line-lovely" data-text="It all sounds lovely.">It all sounds lovely.</span>
+    <span class="line-until">Until…</span>
+  </div>
+
+  <div class="throat-stack" id="throatStack">
+    <span class="ln ln-1">Elena has a severe nut allergy.</span>
+    <span class="ln ln-2">Not the kind that gives someone a rash.</span>
+    <span class="ln ln-3">The kind that closes throats.</span>
+  </div>
+
+  <div class="col-text reveal">
+    <div class="prose">
+      <p>Read her morning again with that in mind. The complimentary treat left on her bedside table. The body lotion in the bathroom. The breakfast tray that might be delivered alongside another guest's dish. Each touchpoint that the resort designed as a gesture of care is, from the inside of Elena's body, a question she has to ask herself.</p>
+    </div>
+  </div>
+
+  <div class="question-pull reveal">
+    Does this have nuts in it?
+  </div>
+
+  <figure class="morning-journey reveal">
+    <img src="allergy-morning.png"
+         alt="Elena's morning user journey reread: the touchpoints across her morning — complimentary treat, body lotion, breakfast tray — annotated with the allergen exposure each carries.">
+    <figcaption class="figcap">Elena's Morning, Reread</figcaption>
+  </figure>
+</section>
+
+<div class="silence" aria-hidden="true"></div>
+
+<!-- =========================================================
+     RESEARCH
+     ========================================================= -->
+<section>
+  <div class="col-text reveal">
+    <div class="section-label">Research</div>
+  </div>
+
+  <div class="research-stat reveal" id="researchStat">
+    <div class="stat-number"><span class="num">5</span><span class="frac">/5</span></div>
+    <div class="stat-caption">People I interviewed described the same pattern</div>
+  </div>
+
+  <div class="col-text reveal">
+    <div class="prose">
+      <p>I spoke with five people who navigate hotel stays with severe food allergies. The pattern was consistent and exhausting: the pre-arrival form gets filled out, the allergy gets repeated at check-in, the server gets reminded at dinner, the amenities get questioned silently, and the complimentary chocolates get inspected before they get eaten — or get left on the nightstand untouched. <em>Vigilance that doesn't turn off.</em></p>
+      <p>External research filled in what those conversations suggested. A study of chefs in resort hotels found that allergen knowledge varies widely across kitchen staff and rarely follows formal training structures (Eren et al., 2021). A more recent study of personal care products in hotels across three continents found that contact allergens — including nut oils — appear regularly in shampoos, lotions, and conditioners, often without clear labeling (Viltakis &amp; Kirchhof, 2025).</p>
+    </div>
+  </div>
+
+  <div class="research-pull-block reveal">
+    <div class="pull">Allergens travel further than kitchens.</div>
+    <div class="footer-caption">What the two research tracks proved together</div>
+  </div>
+
+  <div class="col-text reveal">
+    <div class="prose">
+      <p>Hospitality staff are inconsistently equipped to manage allergens, and allergens reach guests through paths that nobody — not the kitchen, not the front desk, not housekeeping — is currently asked to watch as a system.</p>
+    </div>
+  </div>
+</section>
+
+<div class="silence" aria-hidden="true"></div>
+
+<!-- =========================================================
+     THE (UN)OBVIOUS ANSWER
+     section label → para 1 → 2 → 3 → 4 → pull → para 5
+     ========================================================= -->
+<section>
+  <div class="col-text reveal">
+    <div class="section-label">The (Un)Obvious Answer</div>
+    <div class="prose">
+      <p>Most existing allergen-management tools in hospitality are built for the kitchen. Order tickets flag ingredients. Kitchen display systems warn about cross-contamination. Chefs are trained (to varying degrees) on safe preparation.</p>
+      <p>This makes sense if you believe allergies are a food problem.</p>
+      <p>But the complimentary treat that housekeeping left on Elena's bedside table came from a different supply chain than the kitchen. The body lotion in her bathroom was selected by amenities procurement. The breakfast tray was carried by a runner who never saw the order ticket.</p>
+      <p>Across Elena's morning, allergens reached her — or could have — through <em>at least four separate operational paths</em>, only one of which the kitchen controls.</p>
+    </div>
+  </div>
+
+  <h2 class="pull-display reveal">
+    This isn't a data problem.<br>
+    <span class="accent">It's a coordination problem.</span>
+  </h2>
+
+  <div class="col-text reveal">
+    <div class="prose">
+      <p>The information already exists. Elena typed her allergy into the pre-arrival form weeks before she packed. The front desk confirmed it at check-in. By the time housekeeping stocked her villa, the fact of her allergy had been sitting in a database for days — and still didn't reach the person placing chocolates on her pillow. <em>The information traveled everywhere except the <span class="spread-words" id="spreadFeet">last few feet</span>.</em></p>
+    </div>
+  </div>
+</section>
+
+<div class="silence" aria-hidden="true"></div>
+
+<!-- =========================================================
+     THE CHOICE
+     section label → para 1 → pull (surprise) → para 2 → para 3
+     → watched/unwatched grid → caption → para 4
+     ========================================================= -->
+<section>
+  <div class="col-text reveal">
+    <div class="section-label">The Choice</div>
+    <div class="prose">
+      <p>The obvious place to intervene was the kitchen, or room service — the touchpoints where food is most clearly food. They were tempting precisely because the risk there is legible. Everyone already knows the kitchen is where allergies matter.</p>
+    </div>
+  </div>
+
+  <!-- Surprise pull — word-by-word with underline accent on "housekeeping" -->
+  <div class="pull-decision" id="pullDecision">
+    <span class="w w-1">I</span>
+    <span class="w w-2">chose</span>
+    <span class="w w-3">housekeeping</span><span class="w w-3-dot" style="color: var(--text);">.</span>
+  </div>
+
+  <div class="col-text reveal">
+    <div class="prose">
+      <p>Housekeeping is the team guests never think about, and the system rarely accounts for. They don't handle the meal, so they're easy to leave out of an allergy conversation. But they stock the mini-bar, restock the amenities, select the body products, and leave the complimentary treat on the pillow — every food-adjacent item in the villa that isn't technically a meal.</p>
+      <p>In fact, they touch more of Elena's allergen exposure than the kitchen does, and they're the team least likely to be told about it.</p>
+    </div>
+  </div>
+
+  <div class="watched-grid" id="watchedGrid">
+    <div class="col-watched">
+      <div class="col-label">Watched</div>
+      <div class="col-sub">The kitchen's domain</div>
+      <ul class="col-list">
+        <li>Ingredients</li>
+        <li>Cross-contamination</li>
+        <li>Meal preparation</li>
+      </ul>
+    </div>
+    <div class="col-unwatched">
+      <div class="col-label">Unwatched</div>
+      <div class="col-sub">No team is briefed on these</div>
+      <ul class="col-list">
+        <li>Mini-bar items</li>
+        <li>Restocked amenities</li>
+        <li>Body products &amp; toiletries</li>
+        <li>The complimentary treat</li>
+        <li>In-villa snacks</li>
+      </ul>
+    </div>
+  </div>
+  <div class="watched-caption reveal">More exposure, less visibility</div>
+
+  <div class="col-text reveal" style="margin-top: var(--space-7);">
+    <div class="prose">
+      <p>Designing for the obvious stakeholder would have produced a better version of a system that already exists. <em>Designing for housekeeping meant designing for the gap</em> — the place where care is quietly given or quietly broken, and where nobody was looking.</p>
+    </div>
+  </div>
+</section>
+
+<div class="silence" aria-hidden="true"></div>
+
+<!-- =========================================================
+     THE DESIGN — unified section (contains the video too)
+     section label → para 1 → image → caption →
+     para 2 → para 3 → para 4 → pull → video → "Full Preparation Flow" caption → para 5
+     ========================================================= -->
+<section>
+  <div class="col-text reveal">
+    <div class="section-label">The Design</div>
+    <div class="prose">
+      <p>The result is a single screen housekeeping interacts with before entering a villa — a preparation view that assembles itself around one guest and walks the housekeeper through getting the villa ready safely.</p>
+    </div>
+  </div>
+
+  <figure class="design-figure reveal">
+    <img src="allergy-design.png"
+         alt="The Allergy Service preparation screen: an allergy alert at the top in red, a split view of safe and unsafe items, and a preparation checklist at the bottom that the housekeeper moves through before entering the villa.">
+    <figcaption class="figcap">Preparation Mode — What Housekeeping Sees Before Entering</figcaption>
+  </figure>
+
+  <div class="col-text reveal">
+    <div class="prose">
+      <p>The order isn't arbitrary. <em>The allergy alert sits at the top, <span style="color: var(--accent);">in red</span></em>, so the most important fact about this guest is the first thing seen and the hardest to miss — no remembering required.</p>
+      <p>Safe and unsafe items are split into two plain lists rather than one annotated inventory, because matching against a list is a faster decision than evaluating each item on its own.</p>
+      <p>The preparation checklist comes last, not first, because <em>action should follow understanding</em>: confirm what's safe before the work starts, not while doing it. Each panel hands off to the next in the sequence a housekeeper would actually move through. By the time the work begins, every decision has already been made.</p>
+    </div>
+  </div>
+
+  <h2 class="pull-display reveal">
+    The interface isn't a dashboard.<br>
+    <span class="accent">It's a decision, broken into the order you make it.</span>
+  </h2>
+
+  <figure class="prep-flow reveal">
+    <div class="media">
+      <video src="allergy-flow.mp4"
+             autoplay loop muted playsinline preload="metadata"
+             aria-label="Animated walkthrough of the preparation screen — allergy alert, safe and unsafe item lists, then the preparation checklist."></video>
+    </div>
+    <figcaption class="figcap" style="margin-top: var(--space-4);">The Full Preparation Flow</figcaption>
+  </figure>
+
+  <div class="col-text reveal">
+    <div class="prose">
+      <p>This is preparation mode only — what happens before the housekeeper enters. The natural next step is an execution mode inside the villa, surfacing the same allergy intelligence at the moment items are physically placed. <em>That's where the system would go next; it isn't where this project stopped.</em></p>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     REFLECTION
+     ========================================================= -->
+<section class="reflection">
+  <div class="col-text reveal">
+    <div class="section-label">Reflection</div>
+    <div class="prose">
+      <p>I have a severe nut allergy. The kind I described at the start of this — the kind that closes throats. So the vigilance the research named isn't something I observed from the outside. I've asked the same question Elena asks more times than I can count, in hotels and restaurants and other people's kitchens, and I know what it costs to be the only system watching out for you.</p>
+      <p>That's the part most service design misses. It treats safety as a feature to add, when for some people it's the precondition for being anywhere at all. <em>I designed for housekeeping because that's where the watching quietly fails — but I designed it for the people who shouldn't have to do the watching themselves.</em></p>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     CLOSING — four-line typographic break
+     ========================================================= -->
+<section class="closing">
+  <div class="closing-stack" id="closingStack">
+    <span class="ln ln-1">Care</span>
+    <span class="ln ln-2">is the work that happens</span>
+    <span class="ln ln-3">before</span>
+    <span class="ln ln-4">you have to ask.</span>
+  </div>
+</section>
+
+<!-- =========================================================
+     FOOTER
+     ========================================================= -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-left">
+      <div class="name">Myra Manekia</div>
+      <div class="copyright">© 2026 Myra Manekia</div>
+    </div>
+    <div class="footer-right">
+      <a href="https://www.linkedin.com/in/myra-manekia/" target="_blank" rel="noopener">LinkedIn ↗</a>
+      <a href="mailto:manekiamyra@gmail.com">manekiamyra@gmail.com</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ──────────── Nav scroll shadow
+  const nav = document.querySelector('.nav');
+  const updateNav = () => nav.classList.toggle('scrolled', window.scrollY > 8);
+  window.addEventListener('scroll', updateNav, { passive: true });
+  updateNav();
+
+  // ──────────── Reveal observer
+  const revealIO = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealIO.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => revealIO.observe(el));
+
+  // ──────────── "It all sounds lovely" → crumble when "Until..." appears
+  // Wrap each character in a span so each can translate/rotate/fade independently.
+  // Random rotation per character so the crumble feels organic, not mechanical.
+  const morningTurn = document.getElementById('morningTurn');
+  if (morningTurn) {
+    const lovely = morningTurn.querySelector('.line-lovely');
+    const text = lovely.getAttribute('data-text') || lovely.textContent;
+    lovely.textContent = '';
+    [...text].forEach((char, i) => {
+      const span = document.createElement('span');
+      span.className = 'ch';
+      span.textContent = char === ' ' ? '\u00A0' : char;
+      // Shatter physics — each piece flies in a random direction with
+      // an aggressive rotation. But the timing is now strictly sequential,
+      // not random, so the illusion crumbles one letter after the next.
+      const tx  = (Math.random() * 120 - 60).toFixed(0);   // -60 to +60 px (horizontal scatter)
+      const ty  = (Math.random() * 100 + 50).toFixed(0);   // +50 to +150 px (mostly down)
+      const rot = (Math.random() * 180 - 90).toFixed(1);   // -90 to +90 deg (wider rotation)
+      span.style.setProperty('--tx', tx + 'px');
+      span.style.setProperty('--ty', ty + 'px');
+      span.style.setProperty('--r', rot + 'deg');
+      // Sequential 100ms-per-char stagger — clearly one-after-the-next
+      // but tight enough not to keep moving while the reader is past it.
+      span.style.transitionDelay = (i * 100) + 'ms';
+      lovely.appendChild(span);
+    });
+
+    const turnIO = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          morningTurn.classList.add('visible');
+          // "Until..." starts fading in at 1.6s. Begin crumble at ~1.6s too —
+          // they happen together: the truth arrives as the illusion falls apart.
+          setTimeout(() => morningTurn.classList.add('crumbled'), 1700);
+          turnIO.unobserve(morningTurn);
+        }
+      });
+    }, { threshold: 0.5 });
+    turnIO.observe(morningTurn);
+  }
+
+  // ──────────── Research stat: "/5" first, then "5" lands
+  const researchStat = document.getElementById('researchStat');
+  if (researchStat) {
+    const statIO = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          researchStat.classList.add('visible');
+          statIO.unobserve(researchStat);
+        }
+      });
+    }, { threshold: 0.4 });
+    statIO.observe(researchStat);
+  }
+
+  // ──────────── "I chose housekeeping" — word-by-word with underline
+  // Threshold pushed up to 0.85 and a 600ms settle delay so the animation
+  // doesn't fire while the reader is still on the paragraph above.
+  const pullDecision = document.getElementById('pullDecision');
+  if (pullDecision) {
+    const pdIO = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => pullDecision.classList.add('visible'), 5000);
+          pdIO.unobserve(pullDecision);
+        }
+      });
+    }, { threshold: 0.85 });
+    pdIO.observe(pullDecision);
+  }
+
+  // ──────────── Watched vs Unwatched
+  const watchedGrid = document.getElementById('watchedGrid');
+  if (watchedGrid) {
+    const wIO = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          watchedGrid.classList.add('visible');
+          wIO.unobserve(watchedGrid);
+        }
+      });
+    }, { threshold: 0.3 });
+    wIO.observe(watchedGrid);
+  }
+
+  // ──────────── Throat-stack — "the kind that closes throats" sequential build
+  const throatStack = document.getElementById('throatStack');
+  if (throatStack) {
+    const tsIO = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          throatStack.classList.add('visible');
+          tsIO.unobserve(throatStack);
+        }
+      });
+    }, { threshold: 0.7 });
+    tsIO.observe(throatStack);
+  }
+
+  // ──────────── "Last few feet" — words drift apart as the line is read
+  const spreadFeet = document.getElementById('spreadFeet');
+  if (spreadFeet) {
+    const sfIO = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          spreadFeet.classList.add('visible');
+          sfIO.unobserve(spreadFeet);
+        }
+      });
+    }, { threshold: 0.6 });
+    sfIO.observe(spreadFeet);
+  }
+
+  // ──────────── Closing four-line break
+  const closingStack = document.getElementById('closingStack');
+  if (closingStack) {
+    const cIO = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          closingStack.classList.add('visible');
+          cIO.unobserve(closingStack);
+        }
+      });
+    }, { threshold: 0.4 });
+    cIO.observe(closingStack);
+  }
+
+  // ──────────── Easter egg
+  console.log('%cthe information traveled everywhere except the last few feet.', 'font-family: Fraunces, serif; font-style: italic; color: #8B3A2E; font-size: 14px;');
+</script>
+
+</body>
+</html>

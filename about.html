@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — Myra Manekia</title>
+<meta name="description" content="Myra Manekia. MDes candidate at ArtCenter. Humanist designer, cognitive science as method, AI-native practice.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ──────────── Design tokens ──────────── */
+:root {
+  --bg:           #FAF7F2;
+  --bg-subtle:    #F2EDE5;
+  --text:         #1A1814;
+  --text-muted:   #6B655C;
+  --accent:       #8B3A2E;
+  --border:       #E5DFD4;
+
+  --font-serif:   'Fraunces', Georgia, serif;
+  --font-sans:    'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --space-1: 4px; --space-2: 8px; --space-3: 16px; --space-4: 24px;
+  --space-5: 32px; --space-6: 48px; --space-7: 64px; --space-8: 96px; --space-9: 128px;
+
+  --content-max:   1080px;
+  --container-max: 1200px;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ──────────── Reset ──────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+img, svg { display: block; max-width: 100%; }
+button { background: none; border: none; padding: 0; cursor: pointer; font: inherit; color: inherit; }
+
+/* ──────────── Container ──────────── */
+.container {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+@media (min-width: 768px) { .container { padding: 0 var(--space-6); } }
+
+/* ──────────── Navigation ──────────── */
+.nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  background: var(--bg);
+  z-index: 100;
+  padding: var(--space-3) 0;
+  transition: box-shadow 0.4s var(--ease), padding 0.3s var(--ease);
+}
+.nav.scrolled { box-shadow: 0 1px 0 var(--border); padding: var(--space-2) 0; }
+
+.nav-inner {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+@media (min-width: 768px) { .nav-inner { padding: 0 var(--space-6); } }
+
+.nav-logo {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  position: relative;
+  padding: 4px 0;
+  transition: color 0.3s var(--ease);
+}
+.nav-logo::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.45s var(--ease);
+}
+.nav-logo:hover { color: var(--accent); }
+.nav-logo:hover::after { transform: scaleX(1); }
+
+.nav-links { display: flex; gap: var(--space-5); }
+@media (min-width: 768px) { .nav-links { gap: var(--space-6); } }
+.nav-links a {
+  font-size: 15px;
+  position: relative;
+  padding: 4px 0;
+  transition: color 0.3s var(--ease);
+}
+.nav-links a.current { color: var(--accent); }
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.45s var(--ease);
+}
+.nav-links a.current::after { transform: scaleX(1); }
+.nav-links a:hover { color: var(--accent); }
+.nav-links a:hover::after { transform: scaleX(1); }
+
+/* ──────────── Card label (shared) ──────────── */
+.card-label {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: var(--space-3);
+  position: relative;
+  display: inline-block;
+}
+/* Terracotta underline draws in on card hover */
+.card-label::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 -4px 0;
+  height: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.55s var(--ease);
+}
+.card:hover .card-label::after { transform: scaleX(1); }
+
+/* ──────────── Hero ──────────── */
+.hero {
+  padding: clamp(110px, 13vh, 180px) 0 var(--space-6);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+  align-items: start;
+}
+@media (min-width: 800px) {
+  .hero {
+    grid-template-columns: 1.4fr 1fr;
+    gap: var(--space-7);
+    padding: clamp(120px, 14vh, 200px) 0 var(--space-7);
+  }
+}
+
+.hero-heading {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(30px, 3vw + 16px, 46px);
+  line-height: 1.15;
+  letter-spacing: -0.018em;
+  margin-bottom: var(--space-4);
+  font-variation-settings: 'opsz' 50;
+  position: relative;
+}
+
+/* Typewriter wrap — ghost reserves layout space, typed overlays it */
+.tw-wrap {
+  position: relative;
+  display: block;
+}
+.tw-ghost {
+  visibility: hidden;
+  display: block;
+}
+.tw-live {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+.tw-cursor {
+  display: inline-block;
+  vertical-align: text-bottom;
+  margin-left: 2px;
+  opacity: 0;
+}
+.tw-cursor.show { opacity: 1; }
+.tw-cursor.blink { animation: tw-blink 0.55s steps(1) infinite; }
+@keyframes tw-blink {
+  0%, 50%   { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+/* Heading cursor: matches the heading's text color, thicker for the larger type */
+.hero-heading .tw-cursor {
+  background: var(--text);
+  width: 3px;
+  height: 0.85em;
+  transform: translateY(-0.05em);
+}
+/* Byline cursor: matches the byline's muted color, thinner for the smaller type */
+.byline .tw-cursor {
+  background: var(--text-muted);
+  width: 1.5px;
+  height: 0.9em;
+}
+
+.byline {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--text-muted);
+  position: relative;
+}
+
+/* Portrait */
+.portrait {
+  aspect-ratio: 3 / 4;
+  background: var(--bg-subtle);
+  border-radius: 6px;
+  width: 100%;
+  overflow: hidden;
+}
+.portrait-img {
+  object-fit: cover;
+  object-position: center 25%;
+  height: 100%;
+}
+
+/* ──────────── Bento grid ──────────── */
+.bento {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  padding-bottom: var(--space-8);
+}
+@media (min-width: 800px) {
+  .bento {
+    grid-template-columns: 1.5fr 1fr;
+    gap: var(--space-4);
+  }
+}
+.span-all { grid-column: 1 / -1; }
+
+/* ──────────── Cards ──────────── */
+.card {
+  background: var(--bg-subtle);
+  border-radius: 6px;
+  padding: var(--space-5);
+  transition:
+    transform 0.5s var(--ease),
+    box-shadow 0.5s var(--ease),
+    background 0.5s var(--ease);
+}
+@media (min-width: 800px) {
+  .card { padding: var(--space-5); }
+}
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px -10px rgba(26,24,20,0.10);
+}
+
+.card p {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text-muted);
+}
+.card p + p { margin-top: var(--space-3); }
+.card em, .card i { font-family: var(--font-serif); font-style: italic; font-size: 15px; }
+.card strong, .card b {
+  color: var(--text);
+  font-weight: 600;
+  transition: color 0.3s var(--ease);
+}
+
+/* ──────────── List items: gentle shift + label color on hover ──────────── */
+.exp-list, .now-list { display: flex; flex-direction: column; gap: var(--space-3); }
+.exp-list p, .now-list p {
+  margin: 0;
+  padding-left: 0;
+  transition: padding-left 0.4s var(--ease);
+}
+.exp-list p:hover, .now-list p:hover {
+  padding-left: 6px;
+}
+.exp-list p:hover strong, .now-list p:hover strong {
+  color: var(--accent);
+}
+
+/* ──────────── Thesis card ──────────── */
+.thesis-card .thesis-title {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: clamp(20px, 1.5vw + 12px, 24px);
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  margin-bottom: var(--space-4);
+  color: var(--text);
+}
+
+.thesis-toggle {
+  display: flex;
+  gap: var(--space-5);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: var(--space-3);
+  margin-bottom: var(--space-4);
+  flex-wrap: wrap;
+}
+.toggle-option {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 4px 0;
+  position: relative;
+  transition: color 0.3s var(--ease);
+}
+.toggle-option .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  transition: background 0.3s var(--ease), transform 0.3s var(--ease);
+}
+.toggle-option::after {
+  content: '';
+  position: absolute;
+  left: 14px;
+  right: 0;
+  bottom: -13px;
+  height: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s var(--ease);
+}
+.toggle-option.active { color: var(--text); }
+.toggle-option.active .dot { background: var(--accent); transform: scale(1.15); }
+.toggle-option.active::after { transform: scaleX(1); }
+.toggle-option:hover { color: var(--text); }
+
+/* Crossfade between the two states */
+.thesis-states {
+  display: grid;
+  position: relative;
+  margin-bottom: var(--space-4);
+}
+.thesis-state {
+  grid-area: 1 / 1;
+  transition: opacity 0.5s var(--ease);
+}
+.thesis-states[data-state="organized"] .thesis-state.disorganized {
+  opacity: 0;
+  pointer-events: none;
+}
+.thesis-states[data-state="disorganized"] .thesis-state.organized {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ──────────── DISORGANIZED state — staircase indentation ──────────── */
+.thesis-state.disorganized p { margin: 0; }
+.thesis-state.disorganized .d-opener {
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1.55;
+  margin-bottom: var(--space-3);
+}
+.thesis-state.disorganized .d-line {
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1.55;
+  margin-top: var(--space-2);
+}
+.thesis-state.disorganized .d-line-1 { padding-left: 5%; }
+.thesis-state.disorganized .d-line-2 { padding-left: 12%; }
+.thesis-state.disorganized .d-line-3 { padding-left: 22%; }
+.thesis-state.disorganized .d-line-4 { padding-left: 38%; }
+.thesis-state.disorganized .d-line-5 { padding-left: 60%; }
+.thesis-state.disorganized .d-coda {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-muted);
+  margin-top: var(--space-5);
+  padding-left: 0;
+}
+@media (max-width: 600px) {
+  .thesis-state.disorganized .d-line-1 { padding-left: 3%; }
+  .thesis-state.disorganized .d-line-2 { padding-left: 8%; }
+  .thesis-state.disorganized .d-line-3 { padding-left: 14%; }
+  .thesis-state.disorganized .d-line-4 { padding-left: 22%; }
+  .thesis-state.disorganized .d-line-5 { padding-left: 35%; }
+}
+
+.read-more {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+  transition: gap 0.3s var(--ease), color 0.3s var(--ease), border-color 0.3s var(--ease);
+}
+.read-more::after { content: '→'; transition: transform 0.3s var(--ease); }
+.read-more:hover {
+  gap: 12px;
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+.read-more:hover::after { transform: translateX(2px); }
+
+/* ──────────── NOW/CONTACT specific ──────────── */
+.now-aside {
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+.contact-links { display: inline; }
+.contact-links a {
+  position: relative;
+  padding-bottom: 1px;
+  transition: color 0.3s var(--ease);
+}
+.contact-links a::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s var(--ease);
+}
+.contact-links a:hover { color: var(--accent); }
+.contact-links a:hover::after { transform: scaleX(1); }
+.contact-links .sep { color: var(--border); margin: 0 4px; }
+
+/* ──────────── Footer ──────────── */
+.footer {
+  background: var(--bg-subtle);
+  padding: var(--space-6) 0;
+  font-size: 14px;
+}
+.footer-inner {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  justify-content: space-between;
+}
+@media (min-width: 768px) {
+  .footer-inner {
+    padding: 0 var(--space-6);
+    flex-direction: row;
+    align-items: center;
+  }
+}
+.footer-left .name { font-weight: 500; margin-bottom: 2px; }
+.footer-left .copyright { color: var(--text-muted); font-size: 13px; }
+.footer-right { display: flex; gap: var(--space-5); flex-wrap: wrap; }
+.footer-right a {
+  color: var(--text);
+  transition: color 0.3s var(--ease);
+  position: relative;
+  padding: 2px 0;
+}
+.footer-right a::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.45s var(--ease);
+}
+.footer-right a:hover { color: var(--accent); }
+.footer-right a:hover::after { transform: scaleX(1); }
+
+/* ──────────── Reveal on scroll ──────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+.hero > * { animation: fadeUp 0.7s var(--ease) both; }
+.hero > *:nth-child(1) { animation-delay: 0.05s; }
+.hero > *:nth-child(2) { animation-delay: 0.20s; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ──────────── Focus & motion ──────────── */
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+  .tw-cursor { display: none; }
+}
+
+@media (max-width: 480px) {
+  body { font-size: 16px; }
+  .nav-logo { font-size: 20px; }
+  .nav-links a { font-size: 14px; }
+  .card { padding: var(--space-4); }
+  .footer-right { gap: var(--space-4); }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" aria-label="Primary">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">MM</a>
+    <div class="nav-links">
+      <a href="about.html" class="current">About</a>
+      <a href="writing.html">Writing</a>
+    </div>
+  </div>
+</nav>
+
+<main class="container">
+
+  <section class="hero">
+    <div class="hero-text">
+      <div class="card-label" style="margin-bottom: var(--space-4);">About</div>
+
+      <h1 class="hero-heading">
+        <span class="tw-wrap">
+          <span class="tw-ghost" aria-hidden="true">I came to design through the question of how minds work.</span>
+          <span class="tw-live">
+            <span class="tw-text" id="heading-text">I came to design through the question of how minds work.</span><span class="tw-cursor" id="heading-cursor" aria-hidden="true"></span>
+          </span>
+        </span>
+      </h1>
+
+      <p class="byline">
+        <span class="tw-wrap" style="display:inline-block;">
+          <span class="tw-ghost" aria-hidden="true">— Myra Manekia</span>
+          <span class="tw-live">
+            <span class="tw-text" id="byline-text">— Myra Manekia</span><span class="tw-cursor" id="byline-cursor" aria-hidden="true"></span>
+          </span>
+        </span>
+      </p>
+    </div>
+
+    <!--
+      Portrait. Crop your photo to 3:4 aspect ratio if replacing.
+    -->
+    <img src="myra-portrait.jpg" alt="Myra Manekia" class="portrait portrait-img" loading="lazy">
+  </section>
+
+  <section class="bento">
+
+    <!-- Origin -->
+    <article class="card reveal">
+      <div class="card-label">Origin</div>
+      <p>South Africa is where I grew up. <em>Difference</em> there isn't an abstract category: it's the air we breathe. Multiple languages, cosmologies, and histories in close conversation. That is what formed me.</p>
+      <p>I went to Pomona College for cognitive science with a Human-Centered Design concentration. I wanted to understand <em>difference</em> through what unites us. The premise: cognition is the universal backbone of every mind, but it operates differently in each — refracted by lived experience, by language, by what we were taught to notice.</p>
+      <p>That's what I keep designing toward — the gap between what unites us and what makes us different.</p>
+    </article>
+
+    <!-- How I Work -->
+    <article class="card reveal">
+      <div class="card-label">How I work</div>
+      <p><strong>On method.</strong> Design's most important work happens before the interface — at the level of what someone assumes, perceives, understands. Cognitive science is how I think through that explicitly.</p>
+      <p><strong>On practice.</strong> I work AI-native. AI tools are across every stage of my process — research, prototyping, code I can't write yet, writing I want to argue with. <em>Not a workflow choice. A thinking practice.</em></p>
+    </article>
+
+    <!-- Thesis -->
+    <article class="card thesis-card span-all reveal">
+      <div class="card-label">Thesis — Pomona College</div>
+      <h2 class="thesis-title">How UI design elements affect fluency and memory for text-based content</h2>
+
+      <div class="thesis-toggle" role="tablist" aria-label="Thesis state demonstration">
+        <button class="toggle-option active" data-state="organized" role="tab" aria-selected="true">
+          <span class="dot"></span>
+          Gestalt — Organized
+        </button>
+        <button class="toggle-option" data-state="disorganized" role="tab" aria-selected="false">
+          <span class="dot"></span>
+          Disorganized
+        </button>
+      </div>
+
+      <div class="thesis-states" data-state="organized">
+
+        <!-- Organized version -->
+        <div class="thesis-state organized" role="tabpanel">
+          <p>My thesis explored how UI design's aesthetic complexity affects processing fluency and memory retention for text-based information. Aesthetic complexity in this study was defined as, and determined by, the manipulation of four UI variables: font size, font style, color palette, and layout. The findings were less binary than I expected.</p>
+          <p>Layout emerged as the most consistent variable affecting fluency and memory in my thesis. Specifically, an aesthetically simple and organized layout — structured according to Gestalt principles — promoted better processing and stronger recall. In contrast, font size, font style, and color palette effects depended on the visual context in which they appeared — they worked as a system, not in isolation.</p>
+        </div>
+
+        <!-- Disorganized version — staircase indentation that "falls apart" line by line -->
+        <div class="thesis-state disorganized" role="tabpanel" aria-hidden="true">
+          <p class="d-opener">My thesis explored how UI design's aesthetic <strong>complexity</strong> affects processing fluency and memory retention for text-based information.</p>
+          <p class="d-line d-line-1">Aesthetic complexity in this study was defined as,</p>
+          <p class="d-line d-line-2">and determined by, the manipulation of four UI <em>variables</em>:</p>
+          <p class="d-line d-line-3">font size, font style, color palette, and layout.</p>
+          <p class="d-line d-line-4">The findings were less binary than I</p>
+          <p class="d-line d-line-5"><strong>expected</strong> …</p>
+          <p class="d-coda">Layout emerged as the most consistent variable affecting fluency and memory in my thesis. Specifically, an aesthetically simple and organized layout — structured according to Gestalt principles — promoted better processing and stronger recall. In contrast, font size, font style, and color palette effects depended on the visual context in which they appeared — they worked as a system, not in isolation.</p>
+        </div>
+
+      </div>
+
+      <a href="writing-thesis.html" class="read-more">Read more</a>
+    </article>
+
+    <!-- Experience -->
+    <article class="card reveal">
+      <div class="card-label">Experience</div>
+      <div class="exp-list">
+        <p><strong>Boba.</strong> Started as barista at Pomona's student-run boba business, ended as manager. Led a team of seven through designing, coding, and shipping the custom online ordering platform — drove a 40% increase in semester profit; now serves 9,000+ students across the Claremont Colleges.</p>
+        <p><strong>The Hive at Pomona.</strong> 5+ HCD sprints and design challenges across the Claremont Colleges' design center over two years.</p>
+        <p><strong>Payfast.</strong> Product design intern at a South African fintech. Shipped work.</p>
+      </div>
+    </article>
+
+    <!-- NOW / CONTACT -->
+    <article class="card reveal">
+      <div class="card-label">Now / Contact</div>
+      <div class="now-list">
+        <p><strong>Now.</strong> Finishing MDes at ArtCenter. Gradshow presentation in late August.</p>
+        <p><strong>Looking for.</strong> Design work that begins before the interface — at AI labs, consultancies, and product teams. Open to wherever the question is interesting.</p>
+        <p><strong>Where.</strong> Anywhere in the US (US citizen), remote-friendly. Currently based in San Diego. Available September.</p>
+        <p>
+          <strong>Reach me.</strong>
+          <span class="contact-links">
+            <a href="mailto:manekiamyra@gmail.com">Email</a><span class="sep">·</span><a href="https://www.linkedin.com/in/myra-manekia/" target="_blank" rel="noopener">LinkedIn</a><span class="sep">·</span><a href="https://drive.google.com/file/d/13jPHVsPheOhkNC38VN4sB08DVtP5VLno/view" target="_blank" rel="noopener">Resume</a>
+          </span>
+        </p>
+      </div>
+      <p class="now-aside">Ask me about how boba taught me to design, what 'care' could mean as a design verb, or any of the rabbit holes in cognitive science I disappear into.</p>
+    </article>
+
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-left">
+      <div class="name">Myra Manekia</div>
+      <div class="copyright">© 2026 Myra Manekia</div>
+    </div>
+    <div class="footer-right">
+      <a href="https://www.linkedin.com/in/myra-manekia/" target="_blank" rel="noopener">LinkedIn ↗</a>
+      <a href="mailto:manekiamyra@gmail.com">manekiamyra@gmail.com</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ──────────────────────────────────────────
+  // Clear typewriter targets before render so user
+  // doesn't see the full text flash before animation
+  // ──────────────────────────────────────────
+  (function () {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+    document.getElementById('heading-text').textContent = '';
+    document.getElementById('byline-text').textContent = '';
+  })();
+
+  const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+  async function typeInto(targetId, cursorId, fullText, perChar) {
+    const target = document.getElementById(targetId);
+    const cursor = document.getElementById(cursorId);
+    // Show cursor blinking briefly (waiting state)
+    cursor.classList.add('show', 'blink');
+    await sleep(550);
+    // Stop blinking — typing begins
+    cursor.classList.remove('blink');
+    for (const ch of fullText) {
+      target.textContent += ch;
+      await sleep(perChar);
+    }
+    // Brief pause, then hide cursor
+    await sleep(350);
+    cursor.classList.remove('show');
+  }
+
+  async function runIntro() {
+    // Initial breathing room after the hero fades in
+    await sleep(900);
+    await typeInto('heading-text', 'heading-cursor', "I came to design through the question of how minds work.", 50);
+    await sleep(500);
+    await typeInto('byline-text', 'byline-cursor', "— Myra Manekia", 65);
+  }
+
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    window.addEventListener('load', runIntro);
+  }
+
+  // Reveal cards as they enter view
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        entry.target.style.transitionDelay = `${i * 70}ms`;
+        entry.target.classList.add('visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Nav shadow on scroll
+  const nav = document.querySelector('.nav');
+  const updateNav = () => nav.classList.toggle('scrolled', window.scrollY > 8);
+  window.addEventListener('scroll', updateNav, { passive: true });
+  updateNav();
+
+  // Thesis toggle
+  const states = document.querySelector('.thesis-states');
+  const toggles = document.querySelectorAll('.toggle-option');
+  toggles.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetState = btn.dataset.state;
+      if (states.dataset.state === targetState) return;
+      toggles.forEach(t => {
+        const active = t.dataset.state === targetState;
+        t.classList.toggle('active', active);
+        t.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+      states.dataset.state = targetState;
+      document.querySelectorAll('.thesis-state').forEach(panel => {
+        const visible = panel.classList.contains(targetState);
+        panel.setAttribute('aria-hidden', visible ? 'false' : 'true');
+      });
+    });
+  });
+
+  console.log('%cAbout page.', 'font-family: Fraunces, Georgia, serif; font-style: italic; font-size: 24px; color: #8B3A2E;');
+  console.log('%cThe thesis toggle is real. Try clicking "Disorganized" to see what the thesis was about.', 'font-family: Inter, sans-serif; font-size: 12px; color: #6B655C; line-height: 1.6;');
+</script>
+
+</body>
+</html>

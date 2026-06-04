@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Myra Manekia — (Cognitive) product design</title>
+<meta name="description" content="Humanist designer working at the intersection of cognitive science, ethics, and AI.">
+
+<!--
+  ────────────────────────────────────────────
+  Note from Myra:
+  Yes, this site was vibe-coded with an AI as
+  collaborator. No, that's not ironic given the
+  thesis. It's consistent with it.
+
+  Cognitive science as method.
+  AI as creative partner.
+  Humanism as compass.
+
+  Hover the words "load", "friction", and
+  "recognition" in the intro paragraph.
+  They behave a little like what they mean.
+
+  — Myra
+  ────────────────────────────────────────────
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ──────────── Design tokens ──────────── */
+:root {
+  --bg:           #FAF7F2;
+  --bg-subtle:    #F2EDE5;
+  --text:         #1A1814;
+  --text-muted:   #6B655C;
+  --accent:       #8B3A2E;
+  --border:       #E5DFD4;
+
+  --font-serif:   'Fraunces', Georgia, serif;
+  --font-sans:    'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --space-1: 4px; --space-2: 8px; --space-3: 16px; --space-4: 24px;
+  --space-5: 32px; --space-6: 48px; --space-7: 64px; --space-8: 96px; --space-9: 128px;
+
+  --content-max:   800px;
+  --container-max: 1200px;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ──────────── Reset ──────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+a { color: inherit; text-decoration: none; }
+img, svg { display: block; max-width: 100%; }
+
+/* ──────────── Container ──────────── */
+.container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+@media (min-width: 768px) { .container { padding: 0 var(--space-6); } }
+
+.content-column {
+  max-width: var(--content-max);
+  margin: 0 auto;
+}
+
+/* ──────────── Navigation ──────────── */
+.nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  background: var(--bg);
+  z-index: 100;
+  padding: var(--space-3) 0;
+  transition: box-shadow 0.4s var(--ease), padding 0.3s var(--ease);
+}
+.nav.scrolled {
+  box-shadow: 0 1px 0 var(--border);
+  padding: var(--space-2) 0;
+}
+
+.nav-inner {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+@media (min-width: 768px) { .nav-inner { padding: 0 var(--space-6); } }
+
+.nav-logo {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  position: relative;
+  padding: 4px 0;
+  transition: color 0.3s var(--ease);
+}
+.nav-logo::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.45s var(--ease);
+}
+.nav-logo:hover { color: var(--accent); }
+.nav-logo:hover::after { transform: scaleX(1); }
+
+.nav-links { display: flex; gap: var(--space-5); }
+@media (min-width: 768px) { .nav-links { gap: var(--space-6); } }
+
+.nav-links a {
+  font-size: 15px;
+  position: relative;
+  padding: 4px 0;
+  transition: color 0.3s var(--ease);
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.45s var(--ease);
+}
+.nav-links a:hover { color: var(--accent); }
+.nav-links a:hover::after { transform: scaleX(1); }
+
+/* ──────────── Hero ──────────── */
+.hero {
+  padding: clamp(120px, 14vh, 200px) 0 clamp(64px, 10vh, 120px);
+  text-align: center;
+}
+
+.hero-title {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(36px, 4.2vw + 14px, 64px);
+  line-height: 1.08;
+  letter-spacing: -0.018em;
+  margin-bottom: var(--space-5);
+  font-variation-settings: 'opsz' 60;
+}
+
+.hero-subtitle {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(22px, 1.6vw + 14px, 32px);
+  line-height: 1.3;
+  letter-spacing: -0.008em;
+  margin-bottom: var(--space-6);
+  color: var(--text);
+}
+
+.hero-body {
+  max-width: 560px;
+  margin: 0 auto;
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--text-muted);
+  text-align: left;
+}
+
+/* ──────────── (Cognitive) — typed in sequence ──────────── */
+.cognitive {
+  color: var(--accent);
+  display: inline-block;
+  cursor: text;
+}
+
+.cog-word {
+  color: var(--accent);
+  position: relative;
+  display: inline-block;
+}
+
+.cog-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 0.72em;
+  background: var(--accent);
+  vertical-align: middle;
+  margin-bottom: 0.05em;
+  opacity: 0;
+}
+.cog-cursor.show { opacity: 1; }
+.cog-cursor.blink { animation: cursor-blink 0.55s steps(1) infinite; }
+@keyframes cursor-blink {
+  0%, 50%   { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* ──────────── .mark — terracotta word with marker underline ──────────── */
+/* The .mark class: terracotta color from start, marker draws when .typed is added by JS */
+.mark {
+  color: var(--accent);
+  position: relative;
+  display: inline-block;
+  transition: color 0.4s var(--ease);
+}
+.mark::before {
+  content: '';
+  position: absolute;
+  inset: 88% 0 -2% 0;
+  background: var(--accent);
+  opacity: 0;
+  transform: scaleX(0);
+  transform-origin: left;
+  pointer-events: none;
+}
+.mark.typed::before {
+  opacity: 0.22;
+  transform: scaleX(1);
+  transition: opacity 0.6s var(--ease), transform 0.75s var(--ease);
+}
+.mark.typed:hover::before { opacity: 0.36; }
+
+/* ──────────── Cognitive concepts in body ──────────── */
+/* Default: inherits body text styling. Only hover behavior differs per concept. */
+.concept {
+  display: inline-block;
+  position: relative;
+  cursor: help;
+  transition: color 0.3s var(--ease), font-weight 0.3s var(--ease);
+}
+/* Load: gains weight on hover, same color */
+.concept-load:hover { font-weight: 700; }
+/* Friction: jitters on hover, same color, same weight */
+.concept-friction:hover { animation: friction 0.6s ease-out; }
+@keyframes friction {
+  0%   { transform: translateX(0); }
+  15%  { transform: translateX(-1.5px); }
+  30%  { transform: translateX(1.5px); }
+  45%  { transform: translateX(-1px); }
+  60%  { transform: translateX(1px); }
+  75%  { transform: translateX(-0.5px); }
+  100% { transform: translateX(0); }
+}
+/* Recognition: shifts to terracotta on hover, same weight */
+.concept-recognition:hover { color: var(--accent); }
+
+/* ──────────── Body cursor — appears at end of sequence ──────────── */
+.body-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 0.95em;
+  background: var(--text-muted);
+  vertical-align: text-bottom;
+  margin-left: 2px;
+  opacity: 0;
+  transform: translateY(-2px);
+}
+.body-cursor.show {
+  opacity: 1;
+  animation: blink 1.1s steps(1) infinite;
+}
+@keyframes blink {
+  0%, 50%   { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* ──────────── Selected Works ──────────── */
+.section { padding: var(--space-6) 0 var(--space-8); }
+@media (min-width: 768px) { .section { padding: var(--space-7) 0 var(--space-9); } }
+
+.section-label {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(22px, 1.2vw + 16px, 28px);
+  margin-bottom: var(--space-6);
+  letter-spacing: -0.005em;
+}
+@media (min-width: 768px) { .section-label { margin-bottom: var(--space-7); } }
+
+.works { display: flex; flex-direction: column; gap: var(--space-7); }
+@media (min-width: 768px) { .works { gap: var(--space-8); } }
+
+.work-card {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  align-items: start;
+}
+@media (min-width: 768px) {
+  .work-card {
+    grid-template-columns: 280px 1fr;
+    gap: var(--space-6);
+  }
+}
+
+.work-image {
+  aspect-ratio: 4 / 3;
+  background: transparent;
+  display: block;
+  overflow: hidden;
+  position: relative;
+  transition: transform 0.6s var(--ease);
+}
+.work-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.7s var(--ease);
+}
+.work-image.cover {
+  background: var(--bg-subtle);
+  border-radius: 6px;
+}
+.work-image.cover img {
+  object-fit: cover;
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
+  margin: -1px;
+}
+.work-card:hover .work-image { transform: translateY(-3px); }
+.work-card:hover .work-image img { transform: scale(1.02); }
+
+.work-content { padding-top: var(--space-2); }
+.work-category {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: var(--space-2);
+}
+.work-title {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: clamp(22px, 1vw + 18px, 28px);
+  letter-spacing: -0.012em;
+  margin-bottom: var(--space-3);
+}
+.work-description {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin-bottom: var(--space-4);
+  max-width: 440px;
+}
+.work-link {
+  font-size: 14px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 1px;
+  transition: gap 0.3s var(--ease), border-color 0.3s var(--ease), color 0.3s var(--ease);
+}
+.work-link::after { content: '→'; transition: transform 0.3s var(--ease); }
+.work-card:hover .work-link {
+  gap: 10px;
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+.work-card:hover .work-link::after { transform: translateX(2px); }
+
+/* ──────────── Footer ──────────── */
+.footer {
+  margin-top: var(--space-7);
+  background: var(--bg-subtle);
+  padding: var(--space-6) 0;
+  font-size: 14px;
+}
+.footer-inner {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  justify-content: space-between;
+}
+@media (min-width: 768px) {
+  .footer-inner {
+    padding: 0 var(--space-6);
+    flex-direction: row;
+    align-items: center;
+  }
+}
+.footer-left .name { font-weight: 500; margin-bottom: 2px; }
+.footer-left .copyright { color: var(--text-muted); font-size: 13px; }
+.footer-right { display: flex; gap: var(--space-5); flex-wrap: wrap; }
+.footer-right a {
+  color: var(--text);
+  transition: color 0.3s var(--ease);
+  position: relative;
+  padding: 2px 0;
+}
+.footer-right a::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.45s var(--ease);
+}
+.footer-right a:hover { color: var(--accent); }
+.footer-right a:hover::after { transform: scaleX(1); }
+
+/* ──────────── Reveal animation ──────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+.hero-title    { animation: fadeUp 0.8s 0.05s var(--ease) both; }
+.hero-subtitle { animation: fadeUp 0.8s 0.20s var(--ease) both; }
+.hero-body     { animation: fadeUp 0.8s 0.35s var(--ease) both; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ──────────── Focus & motion respect ──────────── */
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+  .cog-cursor { display: none; }
+  .mark::before { opacity: 0.22; transform: scaleX(1); }
+  .body-cursor { opacity: 1; animation: none; }
+}
+
+/* ──────────── Mobile fine-tuning ──────────── */
+@media (max-width: 480px) {
+  body { font-size: 16px; }
+  .nav-logo { font-size: 20px; }
+  .nav-links a { font-size: 14px; }
+  .footer-right { gap: var(--space-4); }
+  .hero { text-align: left; }
+  .hero-body { padding: 0; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" aria-label="Primary">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">MM</a>
+    <div class="nav-links">
+      <a href="about.html">About</a>
+      <a href="writing.html">Writing</a>
+    </div>
+  </div>
+</nav>
+
+<main class="container">
+  <div class="content-column">
+
+    <section class="hero">
+      <h1 class="hero-title">
+        <span class="cognitive"><span class="cog-paren-l">(</span><span class="cog-word">Cognitive</span><span class="cog-paren-r">)</span><span class="cog-cursor"></span></span> Product design at the intersection of mind, ethics, and AI.
+      </h1>
+      <p class="hero-subtitle">
+        Designing for <span class="mark mark-human">what makes us human</span>, as we build what comes next.
+      </p>
+      <p class="hero-body">
+        I work as a humanist designer, with cognitive science as method and AI as creative partner. My work aims to surface what users carry mentally — <span class="concept concept-load" title="Cognitive load: the mental effort an interface demands.">load</span>, <span class="concept concept-friction" title="Friction: the resistance an interface introduces, intentional or not.">friction</span>, <span class="concept concept-recognition" title="Recognition: the moment a user sees themselves in the design.">recognition</span> — and always stays conscious of who design serves.<span class="body-cursor" aria-hidden="true"></span>
+      </p>
+    </section>
+
+    <section class="section" aria-labelledby="works-heading">
+      <h2 class="section-label" id="works-heading">Selected Works</h2>
+      <div class="works">
+
+        <!-- JustFixIt -->
+        <article class="work-card reveal">
+          <a href="justfixit.html" class="work-image cover" aria-label="View JustFixIt case study">
+            <img src="justfixit-cover.png" alt="JustFixIt — Education Inequality scenario showing the variables panel and system map">
+          </a>
+          <div class="work-content">
+            <div class="work-category">Speculative / Critical Design</div>
+            <h3 class="work-title">JustFixIt</h3>
+            <p class="work-description">
+              A playable critique of solutionism: you "solve" a social problem with a few toggles, then feel how hollow that is. Vibe-coded with Claude.
+            </p>
+            <a href="justfixit.html" class="work-link">View case study</a>
+          </div>
+        </article>
+
+        <!-- Six Senses Dashboard -->
+        <article class="work-card reveal">
+          <a href="sixsenses.html" class="work-image" aria-label="View Six Senses Dashboard case study">
+            <img src="six-senses-cover.png" alt="Six Senses Dashboard — phone showing Good Evening, Elena with check-in timeline">
+          </a>
+          <div class="work-content">
+            <div class="work-category">Product / Dashboard Design</div>
+            <h3 class="work-title">Six Senses Dashboard</h3>
+            <p class="work-description">
+              A luxury resort's app looks like the brand but works like a hotel. A redesign where digital luxury earns its premium by clearing away.
+            </p>
+            <a href="sixsenses.html" class="work-link">View case study</a>
+          </div>
+        </article>
+
+        <!-- Allergy Service -->
+        <article class="work-card reveal">
+          <a href="allergy-service.html" class="work-image" aria-label="View Allergy Service case study">
+            <img src="allergy-cover.png" alt="Allergy Service — housekeeping prep checklist with allergy-safe recommendations">
+          </a>
+          <div class="work-content">
+            <div class="work-category">Service Design</div>
+            <h3 class="work-title">Allergy Service</h3>
+            <p class="work-description">
+              A guest's severe allergy is logged at check-in but never reaches the person leaving chocolates on her pillow. A redesign that closes the last few feet.
+            </p>
+            <a href="allergy-service.html" class="work-link">View case study</a>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-left">
+      <div class="name">Myra Manekia</div>
+      <div class="copyright">© 2026 Myra Manekia</div>
+    </div>
+    <div class="footer-right">
+      <a href="https://www.linkedin.com/in/myra-manekia/" target="_blank" rel="noopener">LinkedIn ↗</a>
+      <a href="mailto:manekiamyra@gmail.com">manekiamyra@gmail.com</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ──────────────────────────────────────────
+  // Intro setup — clear the typed elements BEFORE
+  // the title renders, so user doesn't see a flash
+  // of "(Cognitive)" before the animation starts.
+  // This script is inline so it runs synchronously
+  // as the parser hits it, right after the hero HTML.
+  // ──────────────────────────────────────────
+  (function () {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return; // leave HTML as-is
+    document.querySelector('.cog-paren-l').textContent = '';
+    document.querySelector('.cog-word').textContent = '';
+    document.querySelector('.cog-paren-r').textContent = '';
+  })();
+
+  const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+  async function typeCognitive() {
+    const parenL  = document.querySelector('.cog-paren-l');
+    const word    = document.querySelector('.cog-word');
+    const parenR  = document.querySelector('.cog-paren-r');
+    const cursor  = document.querySelector('.cog-cursor');
+
+    // Cursor appears at start, blinking (waiting state)
+    cursor.classList.add('show', 'blink');
+    await sleep(700);
+
+    // Typing starts — cursor solid (not blinking) while typing
+    cursor.classList.remove('blink');
+
+    const PER_CHAR = 170; // slower per request
+
+    // Type "("
+    parenL.textContent = '(';
+    await sleep(PER_CHAR);
+
+    // Type each letter of "Cognitive"
+    const letters = 'Cognitive';
+    for (const ch of letters) {
+      word.textContent += ch;
+      await sleep(PER_CHAR);
+    }
+
+    // Type ")"
+    parenR.textContent = ')';
+    await sleep(280);
+
+    // Cursor hides — Cognitive typing is complete
+    cursor.classList.remove('show');
+  }
+
+  async function drawHumanMarker() {
+    document.querySelector('.mark-human').classList.add('typed');
+    await sleep(750);
+  }
+
+  async function showBodyCursor() {
+    document.querySelector('.body-cursor').classList.add('show');
+  }
+
+  async function runIntro() {
+    // Initial breath after the hero fades in
+    await sleep(1500);
+    // Step 1: type "(Cognitive)"
+    await typeCognitive();
+    // Equal breath
+    await sleep(1100);
+    // Step 2: marker underline draws beneath "what makes us human"
+    await drawHumanMarker();
+    // Equal breath
+    await sleep(1100);
+    // Step 3: body cursor appears
+    await showBodyCursor();
+  }
+
+  // If reduced motion, show everything in final state
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelector('.body-cursor').classList.add('show');
+    document.querySelector('.mark-human').classList.add('typed');
+  } else {
+    window.addEventListener('load', runIntro);
+  }
+
+  // Reveal cards as they enter view, with subtle stagger
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        entry.target.style.transitionDelay = `${i * 90}ms`;
+        entry.target.classList.add('visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Nav gets a hairline shadow once the page scrolls
+  const nav = document.querySelector('.nav');
+  const updateNav = () => nav.classList.toggle('scrolled', window.scrollY > 8);
+  window.addEventListener('scroll', updateNav, { passive: true });
+  updateNav();
+
+  // Hello to anyone reading the console.
+  console.log('%cHi.', 'font-family: Fraunces, Georgia, serif; font-size: 32px; color: #8B3A2E; font-weight: 500;');
+  console.log('%cThis site was vibe-coded with Claude as creative partner.\nIf you read JustFixIt, you already know why that is consistent with the thesis, not in tension with it.\n\nTry hovering "load", "friction", and "recognition" in the intro.\n\n— Myra', 'font-family: Inter, sans-serif; font-size: 13px; color: #6B655C; line-height: 1.7;');
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JustFixIt — Myra Manekia</title>
+<meta name="description" content="A critical design artifact about solutionism. ArtCenter MDes · People, Environments, Society · Spring 2026.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   DESIGN TOKENS — locked to portfolio system
+   ============================================================ */
+:root {
+  --bg:           #FAF7F2;
+  --bg-subtle:    #F2EDE5;
+  --text:         #1A1814;
+  --text-muted:   #6B655C;
+  --accent:       #8B3A2E;
+  --accent-dark:  #6F2D24;
+  --border:       #E5DFD4;
+
+  --font-serif:   'Fraunces', Georgia, serif;
+  --font-sans:    'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --space-1: 4px; --space-2: 8px; --space-3: 16px; --space-4: 24px;
+  --space-5: 32px; --space-6: 48px; --space-7: 64px; --space-8: 96px; --space-9: 128px;
+
+  --col-text:      720px;
+  --col-media:     880px;
+  --col-wide:      1080px;
+  --container-max: 1200px;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ============================================================
+   RESET
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+img, svg { display: block; max-width: 100%; }
+
+/* ============================================================
+   COLUMN HELPERS
+   ============================================================ */
+.col-text    { max-width: var(--col-text);  margin: 0 auto; padding: 0 var(--space-4); }
+.col-media   { max-width: var(--col-media); margin: 0 auto; padding: 0 var(--space-4); }
+.col-wide    { max-width: var(--col-wide);  margin: 0 auto; padding: 0 var(--space-4); }
+@media (min-width: 768px) {
+  .col-text, .col-media, .col-wide { padding: 0 var(--space-6); }
+}
+
+/* ============================================================
+   NAVIGATION  (matches writing-thesis.html exactly)
+   ============================================================ */
+.nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  background: var(--bg);
+  z-index: 100;
+  padding: var(--space-3) 0;
+  transition: box-shadow 0.4s var(--ease), padding 0.3s var(--ease), background 0.4s var(--ease), color 0.4s var(--ease);
+}
+.nav.scrolled { box-shadow: 0 1px 0 var(--border); padding: var(--space-2) 0; }
+/* Dark-mode nav for when we're scrolling through the Reckoning section */
+.nav.on-dark { background: var(--text); color: var(--bg); box-shadow: 0 1px 0 rgba(255,255,255,0.06); }
+.nav.on-dark .nav-logo { color: var(--bg); }
+.nav.on-dark .nav-links a { color: rgba(250,247,242,0.85); }
+.nav.on-dark .nav-links a:hover { color: var(--bg); }
+
+.nav-inner {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+@media (min-width: 768px) { .nav-inner { padding: 0 var(--space-6); } }
+
+.nav-logo {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  position: relative;
+  padding: 4px 0;
+  transition: color 0.3s var(--ease);
+}
+.nav-logo::after {
+  content: ''; position: absolute; inset: auto 0 0 0;
+  height: 1px; background: currentColor;
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.45s var(--ease);
+}
+.nav-logo:hover { color: var(--accent); }
+.nav-logo:hover::after { transform: scaleX(1); }
+
+.nav-links { display: flex; gap: var(--space-5); }
+@media (min-width: 768px) { .nav-links { gap: var(--space-6); } }
+.nav-links a {
+  font-size: 15px; position: relative; padding: 4px 0;
+  transition: color 0.3s var(--ease);
+}
+.nav-links a::after {
+  content: ''; position: absolute; inset: auto 0 0 0;
+  height: 1px; background: currentColor;
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.45s var(--ease);
+}
+.nav-links a:hover { color: var(--accent); }
+.nav-links a:hover::after { transform: scaleX(1); }
+
+/* ============================================================
+   NO-NUMBER SLIDER DEMO — embodied design moment
+   ============================================================ */
+.slider-demo {
+  max-width: 320px;
+  /* asymmetric margins compensate for the always-reserved 46px microcopy slot
+     below the visible track — visual spacing reads symmetric */
+  margin: var(--space-8) auto var(--space-6);
+  padding: 0 var(--space-4);
+}
+.slider-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: var(--space-3);
+}
+.slider-input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 24px;
+  background: transparent;
+  cursor: pointer;
+  outline: none;
+  margin: 0;
+  padding: 0;
+}
+/* WebKit / Blink track */
+.slider-input::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(
+    to right,
+    var(--accent) 0%,
+    var(--accent) var(--fill, 50%),
+    var(--border) var(--fill, 50%),
+    var(--border) 100%
+  );
+}
+/* WebKit / Blink thumb */
+.slider-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background: var(--text);
+  border-radius: 50%;
+  border: none;
+  cursor: grab;
+  margin-top: -7px;
+  transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease);
+}
+.slider-input:hover::-webkit-slider-thumb { transform: scale(1.08); }
+.slider-input:active::-webkit-slider-thumb {
+  cursor: grabbing;
+  transform: scale(1.15);
+  box-shadow: 0 0 0 8px rgba(26,24,20,0.06);
+}
+.slider-input:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 4px rgba(139,58,46,0.35);
+}
+/* Firefox track */
+.slider-input::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(
+    to right,
+    var(--accent) 0%,
+    var(--accent) var(--fill, 50%),
+    var(--border) var(--fill, 50%),
+    var(--border) 100%
+  );
+}
+/* Firefox thumb */
+.slider-input::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  background: var(--text);
+  border-radius: 50%;
+  border: none;
+  cursor: grab;
+  transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease);
+}
+.slider-input:hover::-moz-range-thumb { transform: scale(1.08); }
+.slider-input:active::-moz-range-thumb {
+  cursor: grabbing;
+  transform: scale(1.15);
+  box-shadow: 0 0 0 8px rgba(26,24,20,0.06);
+}
+.slider-input:focus-visible::-moz-range-thumb {
+  box-shadow: 0 0 0 4px rgba(139,58,46,0.35);
+}
+.slider-microcopy {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 14px;
+  font-weight: 400;
+  font-variation-settings: 'opsz' 18;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: var(--space-4);
+  min-height: 22px; /* reserve space — prevent layout jump on fade */
+  opacity: 0;
+  transition: opacity 0.9s var(--ease);
+}
+.slider-microcopy.visible { opacity: 1; }
+
+/* ============================================================
+   PAGE TOP — holds back-to-works link above hero
+   ============================================================ */
+.page-top {
+  padding-top: clamp(90px, 11vh, 130px);
+  padding-bottom: 0;
+}
+
+/* Utility: vertical rhythm for short bare sections */
+.vrhythm { padding: var(--space-8) 0; }
+
+/* ============================================================
+   BACK LINK  (matches writing-thesis.html exactly)
+   ============================================================ */
+.back-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 13px; color: var(--text-muted); text-decoration: none;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  transition: color 0.3s var(--ease), gap 0.3s var(--ease);
+  opacity: 0; animation: fadeUp 0.9s var(--ease) 0.1s forwards;
+}
+.back-link:hover { color: var(--accent); gap: 12px; }
+.back-link .arrow { display: inline-block; transition: transform 0.3s var(--ease); }
+.back-link:hover .arrow { transform: translateX(-2px); }
+
+/* ============================================================
+   HERO — opening bait
+   ============================================================ */
+.hero {
+  padding: var(--space-5) 0 var(--space-7);
+  text-align: center;
+}
+.hero-title {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(44px, 6.5vw, 84px);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  font-variation-settings: 'opsz' 96;
+  color: var(--text);
+}
+.hero-title .line {
+  display: block;
+  opacity: 0;
+  transform: translateY(18px);
+  animation: fadeUp 1.1s var(--ease) forwards;
+}
+.hero-title .line-1 { animation-delay: 0.15s; }
+.hero-title .line-2 { animation-delay: 0.85s; }
+
+.hero-sub {
+  margin-top: var(--space-7);
+  font-size: 16px;
+  color: var(--text-muted);
+  line-height: 1.7;
+  opacity: 0;
+  animation: fadeUp 1s var(--ease) 1.55s forwards;
+}
+.hero-sub p { margin-bottom: var(--space-2); }
+.hero-sub p:last-child { margin-bottom: 0; }
+
+/* Hero figure: bait screenshot on bg-subtle band */
+.hero-figure {
+  background: var(--bg-subtle);
+  padding: clamp(var(--space-6), 6vw, var(--space-8)) 0;
+  margin-top: var(--space-7);
+}
+.hero-figure figure { max-width: var(--col-wide); margin: 0 auto; padding: 0 var(--space-4); }
+@media (min-width: 768px) { .hero-figure figure { padding: 0 var(--space-6); } }
+.hero-figure img {
+  width: 100%; height: auto;
+  border-radius: 6px;
+  box-shadow: 0 30px 60px -30px rgba(26,24,20,0.18);
+}
+.figcap {
+  display: block;
+  margin-top: var(--space-3);
+  font-size: 13px;
+  color: var(--text-muted);
+  text-align: center;
+  font-variation-settings: 'opsz' 14;
+}
+
+/* ============================================================
+   META + OPENING QUESTION
+   ============================================================ */
+.opening { padding: var(--space-9) 0 var(--space-8); }
+.meta-line {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: var(--space-5);
+}
+.section-title {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(32px, 3.5vw + 12px, 50px);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  font-variation-settings: 'opsz' 60;
+  color: var(--text);
+  margin-bottom: var(--space-6);
+}
+.lead p {
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--text-muted);
+  margin-bottom: var(--space-4);
+}
+.lead p:last-child { margin-bottom: 0; }
+
+/* ============================================================
+   GENERIC PROSE INSIDE SECTIONS
+   ============================================================ */
+.prose p {
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--text-muted);
+  margin-bottom: var(--space-4);
+}
+.prose p:last-child { margin-bottom: 0; }
+.prose em, .prose i {
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.prose strong, .prose b { color: var(--text); font-weight: 600; }
+.prose-list {
+  list-style: none; padding: 0; margin: var(--space-6) 0 var(--space-4) 0;
+}
+.prose-list li {
+  font-size: 16px; line-height: 1.75;
+  color: var(--text-muted);
+  padding-left: var(--space-4);
+  margin-bottom: var(--space-2);
+}
+
+.section-label {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: var(--space-4);
+}
+
+/* ============================================================
+   BARRIO LOGAN — image grid (2 top, 1 bottom)
+   ============================================================ */
+.image-grid {
+  margin: var(--space-7) auto;
+}
+.image-grid .row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+.image-grid .row:last-child { margin-bottom: 0; }
+.image-grid .row.single { grid-template-columns: 1fr; }
+.image-grid img {
+  width: 100%; height: auto;
+  border-radius: 4px;
+}
+.image-grid .credits {
+  display: block;
+  margin-top: var(--space-3);
+  font-size: 13px;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.6;
+}
+@media (max-width: 600px) {
+  .image-grid .row { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+   FULL-BLEED FREEWAY IMAGE WITH OVERLAY
+   ============================================================ */
+.freeway {
+  position: relative;
+  margin: var(--space-8) 0;
+  overflow: hidden;
+}
+.freeway img {
+  width: 100%; height: auto;
+  display: block;
+  filter: grayscale(15%) brightness(1.05);
+}
+.freeway-overlay {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  gap: var(--space-5);
+  background: linear-gradient(to bottom, rgba(250,247,242,0.55), rgba(250,247,242,0.35));
+}
+.freeway-overlay .stat-line {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(28px, 3.5vw, 48px);
+  letter-spacing: 0.02em;
+  color: var(--text);
+  text-shadow: 0 1px 0 rgba(250,247,242,0.6);
+}
+
+/* ============================================================
+   DISPLACED LINES — "Industrial here / Residential there"
+   ============================================================ */
+.displaced {
+  margin: var(--space-8) 0;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(22px, 2vw + 14px, 32px);
+  line-height: 1.5;
+  font-variation-settings: 'opsz' 48;
+  color: var(--text);
+}
+.displaced .left {
+  display: block;
+  text-align: left;
+  opacity: 0;
+  transform: translateX(-24px);
+  transition: opacity 0.9s var(--ease), transform 0.9s var(--ease);
+}
+.displaced .right {
+  display: block;
+  text-align: right;
+  margin-top: var(--space-3);
+  opacity: 0;
+  transform: translateX(24px);
+  transition: opacity 0.9s var(--ease) 0.25s, transform 0.9s var(--ease) 0.25s;
+}
+.displaced.visible .left, .displaced.visible .right {
+  opacity: 1; transform: translateX(0);
+}
+
+/* The "Except here and there..." line with subtle nudge */
+.same-block {
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--text-muted);
+  margin: var(--space-6) 0;
+}
+.same-block .here, .same-block .there {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 500;
+  color: var(--text);
+  display: inline-block;
+  transition: transform 0.8s var(--ease);
+}
+.same-block.visible .here  { transform: translateX(-3px); }
+.same-block.visible .there { transform: translateX(3px); }
+
+/* ============================================================
+   85-95% STAT BLOCK
+   ============================================================ */
+.stat-block {
+  margin: var(--space-9) 0;
+  text-align: center;
+}
+.stat-number {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: clamp(72px, 9vw, 128px);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  font-variation-settings: 'opsz' 144;
+  color: var(--text);
+}
+.stat-caption {
+  margin-top: var(--space-4);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+.stat-caption .em-cancer { color: var(--accent); font-weight: 600; }
+
+/* ============================================================
+   TIMELINE
+   ============================================================ */
+.timeline {
+  margin: var(--space-8) auto;
+  max-width: 620px;
+  padding: var(--space-6) 0 var(--space-4);
+}
+.timeline-track {
+  position: relative;
+  height: 2px;
+  margin: var(--space-5) 0;
+}
+.timeline-line {
+  position: absolute; inset: 0 auto 0 0;
+  height: 100%;
+  background: var(--accent);
+  width: 0%;
+  transition: width 1.6s var(--ease);
+}
+.timeline.visible .timeline-line { width: 100%; }
+
+.timeline-dots {
+  position: absolute; inset: 0;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.dot {
+  width: 11px; height: 11px;
+  background: var(--bg);
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  opacity: 0;
+  transform: scale(0.4);
+  transition: opacity 0.5s var(--ease), transform 0.5s var(--ease), background 0.4s var(--ease);
+}
+.timeline.visible .dot { opacity: 1; transform: scale(1); background: var(--accent); }
+.timeline.visible .dot-1 { transition-delay: 0.2s; }
+.timeline.visible .dot-2 { transition-delay: 0.9s; }
+.timeline.visible .dot-3 { transition-delay: 1.5s; }
+
+.timeline-labels {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text);
+  margin-bottom: var(--space-3);
+}
+.timeline-labels span { text-align: center; }
+.timeline-labels span:first-child { text-align: left; }
+.timeline-labels span:last-child  { text-align: right; }
+
+.timeline-captions {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-top: var(--space-3);
+}
+.timeline-captions span { text-align: center; }
+.timeline-captions span:first-child { text-align: left; }
+.timeline-captions span:last-child  { text-align: right; }
+
+/* ============================================================
+   PULL QUOTE — Julie Corrales
+   ============================================================ */
+.pullquote {
+  margin: var(--space-8) 0;
+  padding-left: var(--space-5);
+  border-left: 2px solid var(--accent);
+  position: relative;
+}
+.pullquote .qmark {
+  font-family: var(--font-serif);
+  font-size: 64px;
+  line-height: 0.6;
+  color: var(--accent);
+  position: absolute;
+  top: -8px;
+  left: var(--space-5);
+}
+.pullquote blockquote {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(20px, 1.5vw + 12px, 26px);
+  line-height: 1.4;
+  color: var(--text);
+  margin: var(--space-5) 0 var(--space-4);
+  font-variation-settings: 'opsz' 36;
+}
+.pullquote .attr {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ============================================================
+   THREE-LINE DISPLAY — "We know the world is systemic..."
+   ============================================================ */
+.display-three {
+  margin: var(--space-9) 0;
+  text-align: center;
+}
+.display-three .l1, .display-three .l2, .display-three .l3 {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: clamp(32px, 3.5vw + 12px, 52px);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  font-variation-settings: 'opsz' 72;
+}
+.display-three .l1 {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--text);
+}
+.display-three .l2 {
+  font-style: italic;
+  font-weight: 500;
+  color: var(--accent);
+  margin: var(--space-3) 0;
+}
+.display-three .l3 {
+  font-style: normal;
+  font-weight: 300;
+  color: var(--text);
+}
+
+/* ============================================================
+   INHERITANCE — 4 stacked cards
+   ============================================================ */
+.inheritance {
+  margin: var(--space-8) auto;
+  max-width: 760px;
+  position: relative;
+}
+.era {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: var(--space-6);
+  align-items: start;
+  padding: var(--space-5) 0;
+  position: relative;
+}
+.era-card {
+  background: var(--bg-subtle);
+  border-radius: 8px;
+  padding: var(--space-5) var(--space-4);
+  text-align: center;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  position: relative;
+  transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
+}
+.era-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 36px -20px rgba(26,24,20,0.2);
+}
+.era-period {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.era-name {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 22px;
+  line-height: 1.2;
+  color: var(--text);
+}
+.era-diagram {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin-top: var(--space-2);
+}
+.era-body p {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text-muted);
+  margin-bottom: var(--space-3);
+}
+.era-body p:last-child { margin-bottom: 0; }
+
+/* Connector line between cards */
+.era::before {
+  content: '';
+  position: absolute;
+  left: 120px;  /* center of 240px card column */
+  top: 100%;
+  width: 1px;
+  height: var(--space-5);
+  background: var(--accent);
+  opacity: 0.3;
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.6s var(--ease);
+}
+.era:last-child::before { display: none; }
+.era.visible::before { transform: scaleY(1); }
+
+/* Stagger reveal */
+.era {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+}
+.era.visible { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 720px) {
+  .era { grid-template-columns: 1fr; gap: var(--space-4); }
+  .era::before { left: 50%; }
+}
+
+/* ============================================================
+   STAKEHOLDER MAP — split column
+   ============================================================ */
+.map-image {
+  margin: var(--space-7) auto;
+  max-width: var(--col-media);
+}
+.map-image a {
+  display: block;
+  cursor: zoom-in;
+  transition: transform 0.45s var(--ease), box-shadow 0.45s var(--ease);
+}
+.map-image a:hover { transform: translateY(-2px); }
+.map-image img {
+  width: 100%; height: auto;
+  border-radius: 4px;
+  box-shadow: 0 20px 40px -25px rgba(26,24,20,0.2);
+  transition: box-shadow 0.45s var(--ease);
+}
+.map-image a:hover img {
+  box-shadow: 0 26px 50px -22px rgba(26,24,20,0.28);
+}
+.map-image .figcap { margin-top: var(--space-3); }
+
+.split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-7);
+  margin: var(--space-7) auto;
+  max-width: var(--col-text);
+  padding: 0 var(--space-4);
+}
+@media (min-width: 768px) { .split { padding: 0 var(--space-6); } }
+.split .col {
+  padding-left: var(--space-4);
+  border-left: 2px solid var(--accent);
+}
+.split h3 {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 20px;
+  color: var(--text);
+  margin-bottom: var(--space-3);
+}
+.split p {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text-muted);
+  margin-bottom: var(--space-3);
+}
+.split p:last-child { margin-bottom: 0; }
+@media (max-width: 640px) {
+  .split { grid-template-columns: 1fr; gap: var(--space-5); }
+}
+
+/* ============================================================
+   DESIGN QUESTION — italic centered display
+   ============================================================ */
+.design-question {
+  margin: var(--space-9) 0;
+  text-align: center;
+}
+.design-question .label { margin-bottom: var(--space-5); }
+.design-question .q {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(28px, 2.5vw + 14px, 42px);
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  font-variation-settings: 'opsz' 56;
+  color: var(--text);
+  max-width: 680px;
+  margin: 0 auto;
+}
+.design-question .rule {
+  display: block;
+  width: 40px;
+  height: 1px;
+  background: var(--accent);
+  margin: var(--space-6) auto 0;
+}
+
+/* ============================================================
+   ARTIFACT TOUR — alternating text + media
+   ============================================================ */
+.artifact-figure {
+  margin: var(--space-7) auto;
+  max-width: var(--col-wide);
+  padding: 0 var(--space-4);
+}
+@media (min-width: 768px) { .artifact-figure { padding: 0 var(--space-6); } }
+.artifact-figure img:not(.callout) {
+  width: 100%; height: auto;
+  display: block;
+  border-radius: 6px;
+  box-shadow: 0 24px 48px -28px rgba(26,24,20,0.22);
+}
+
+/* ============================================================
+   CALLOUT OVERLAYS — pop-out emphasis on dashboard screenshots
+   ============================================================ */
+.callout-stage {
+  position: relative;
+}
+.callout {
+  position: absolute;
+  display: block;
+  height: auto;
+  filter: drop-shadow(0 14px 28px rgba(26,24,20,0.22));
+  opacity: 0;
+  transform: scale(0.94);
+  transition:
+    opacity 0.9s var(--ease),
+    transform 0.9s var(--ease);
+  pointer-events: none;
+}
+.with-callouts.visible .callout {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Stagger each callout's entrance so they feel like the system responding */
+.with-callouts.visible .callout-converging       { transition-delay: 0.45s; }
+.with-callouts.visible .callout-progress         { transition-delay: 0.75s; }
+.with-callouts.visible .callout-decision-profile { transition-delay: 0.50s; }
+
+/* Individual positions — percentages so they scale with the parent image */
+.callout-converging {
+  top: 9%;
+  left: 37.5%;
+  width: 35%;
+}
+.callout-progress {
+  top: 26%;
+  left: 1%;
+  width: 30%;
+}
+.callout-decision-profile {
+  bottom: -2%;
+  right: 0%;
+  width: 30%;
+}
+
+/* ============================================================
+   THE RECKONING — full-bleed dark
+   ============================================================ */
+.reckoning {
+  background: var(--text);
+  color: var(--bg);
+  padding: var(--space-9) 0;
+  position: relative;
+  overflow: hidden;
+  margin-top: var(--space-9);
+}
+/* Faint scanline overlay */
+.reckoning::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 2px,
+    rgba(250,247,242,0.012) 3px,
+    rgba(250,247,242,0.012) 4px
+  );
+  pointer-events: none;
+}
+.reckoning .label-dark {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: var(--space-5);
+}
+.reckoning .prose p {
+  color: rgba(250,247,242,0.78);
+  /* slower fades inside the Reckoning */
+  transition-duration: 1.1s !important;
+}
+.reckoning .prose em, .reckoning .prose i { color: rgba(250,247,242,0.78); }
+.reckoning .prose strong { color: var(--bg); }
+.reckoning .artifact-figure img {
+  background: rgba(250,247,242,0.04);
+  box-shadow: 0 24px 60px -30px rgba(0,0,0,0.6);
+}
+.reckoning .figcap { color: rgba(250,247,242,0.5); }
+
+.reckoning .reckoning-display {
+  margin: var(--space-8) auto;
+  text-align: center;
+  max-width: 760px;
+  padding: 0 var(--space-4);
+}
+.reckoning .reckoning-display .line {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(28px, 3vw + 12px, 44px);
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  font-variation-settings: 'opsz' 64;
+  color: var(--bg);
+}
+
+.epistemology {
+  margin: var(--space-8) auto var(--space-4);
+  text-align: center;
+}
+.epistemology .line {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(32px, 3.5vw + 12px, 50px);
+  color: var(--bg);
+  letter-spacing: -0.015em;
+  font-variation-settings: 'opsz' 72;
+}
+
+/* ============================================================
+   CONTRADICTION + WORK ISN'T — back to cream
+   ============================================================ */
+.work-line {
+  margin: var(--space-8) auto;
+  text-align: center;
+  padding: 0 var(--space-4);
+}
+.work-line .line {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(22px, 2vw + 12px, 32px);
+  line-height: 1.4;
+  color: var(--text);
+  font-variation-settings: 'opsz' 48;
+  max-width: 640px;
+  margin: 0 auto;
+}
+.work-line .line em { font-weight: 600; color: var(--accent); }
+
+/* ============================================================
+   WHAT IT IS / ISN'T — two columns
+   ============================================================ */
+.cant-can {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+  margin: var(--space-7) auto;
+  max-width: var(--col-text);
+  padding: 0 var(--space-4);
+}
+@media (min-width: 768px) { .cant-can { padding: 0 var(--space-6); gap: var(--space-7); } }
+.cant-can .col {
+  padding: var(--space-5) var(--space-5);
+  background: var(--bg-subtle);
+  border-radius: 6px;
+}
+.cant-can h3 {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 19px;
+  color: var(--text);
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border);
+}
+.cant-can p {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text-muted);
+  margin-bottom: var(--space-3);
+}
+.cant-can p:last-child { margin-bottom: 0; }
+@media (max-width: 640px) {
+  .cant-can { grid-template-columns: 1fr; }
+}
+
+.iso-line {
+  margin: var(--space-7) auto;
+  max-width: var(--col-text);
+  padding: 0 var(--space-4);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(18px, 1vw + 14px, 22px);
+  line-height: 1.5;
+  color: var(--text);
+  text-align: center;
+}
+@media (min-width: 768px) { .iso-line { padding: 0 var(--space-6); } }
+
+/* ============================================================
+   OUTRO HERO
+   ============================================================ */
+.outro {
+  padding: var(--space-7) 0 var(--space-9);
+  text-align: center;
+  background: var(--bg);
+}
+.outro-line {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-style: normal;
+  font-size: clamp(28px, 3vw + 14px, 44px);
+  line-height: 1.25;
+  letter-spacing: -0.018em;
+  font-variation-settings: 'opsz' 64;
+  color: var(--text);
+  max-width: 760px;
+  margin: 0 auto var(--space-7);
+  padding: 0 var(--space-4);
+}
+.cta-button {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 28px;
+  background: var(--accent);
+  color: var(--bg);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border-radius: 6px;
+  transition: background 0.3s var(--ease), transform 0.4s var(--ease), gap 0.3s var(--ease), box-shadow 0.4s var(--ease);
+}
+.cta-button::after {
+  content: '→';
+  transition: transform 0.3s var(--ease);
+}
+.cta-button:hover {
+  background: var(--accent-dark);
+  transform: translateY(-2px);
+  gap: 12px;
+  box-shadow: 0 10px 24px -8px rgba(139,58,46,0.4);
+}
+.cta-button:hover::after { transform: translateX(2px); }
+.cta-button:active { transform: translateY(0); }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.footer {
+  background: var(--bg-subtle);
+  padding: var(--space-6) 0;
+  font-size: 14px;
+}
+.footer-inner {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+  display: flex; flex-direction: column;
+  gap: var(--space-3);
+  justify-content: space-between;
+}
+@media (min-width: 768px) {
+  .footer-inner { padding: 0 var(--space-6); flex-direction: row; align-items: center; }
+}
+.footer-left .name { font-weight: 500; margin-bottom: 2px; }
+.footer-left .copyright { color: var(--text-muted); font-size: 13px; }
+.footer-right { display: flex; gap: var(--space-5); flex-wrap: wrap; }
+.footer-right a {
+  color: var(--text); position: relative; padding: 2px 0;
+  transition: color 0.3s var(--ease);
+}
+.footer-right a::after {
+  content: ''; position: absolute; inset: auto 0 0 0;
+  height: 1px; background: currentColor;
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.45s var(--ease);
+}
+.footer-right a:hover { color: var(--accent); }
+.footer-right a:hover::after { transform: scaleX(1); }
+
+/* ============================================================
+   SCROLL REVEAL
+   ============================================================ */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   FOCUS + REDUCED MOTION
+   ============================================================ */
+*:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal, .displaced, .same-block, .timeline, .era, .callout { opacity: 1 !important; transform: none !important; }
+  .timeline-line { width: 100% !important; }
+  .dot { opacity: 1 !important; transform: scale(1) !important; background: var(--accent) !important; }
+}
+
+@media (max-width: 480px) {
+  body { font-size: 16px; }
+  .nav-logo { font-size: 20px; }
+  .nav-links a { font-size: 14px; }
+  .cta-button { padding: 12px 22px; font-size: 12px; }
+  .footer-right { gap: var(--space-4); }
+}
+
+/* ============================================================
+   REFLECTION — consistent treatment across all case studies
+   ============================================================ */
+.reflection {
+  background: var(--bg-subtle);
+  padding: var(--space-9) 0;
+  margin: var(--space-8) 0 0 0;
+}
+.reflection .prose p {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.8;
+}
+</style>
+</head>
+<body>
+
+<!-- =========================================================
+     NAV
+     ========================================================= -->
+<nav class="nav" aria-label="Primary">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">MM</a>
+    <div class="nav-links">
+      <a href="about.html">About</a>
+      <a href="writing.html">Writing</a>
+    </div>
+  </div>
+</nav>
+
+<!-- =========================================================
+     PAGE TOP — Back to works link (same pattern as writing pages)
+     ========================================================= -->
+<div class="page-top">
+  <div class="col-text">
+    <a href="index.html" class="back-link"><span class="arrow">←</span> Back to works</a>
+  </div>
+</div>
+
+<!-- =========================================================
+     HERO — the bait
+     ========================================================= -->
+<header class="hero">
+  <div class="col-text">
+    <h1 class="hero-title">
+      <span class="line line-1">Every problem has a solution.</span>
+      <span class="line line-2">Find yours.</span>
+    </h1>
+    <div class="hero-sub">
+      <p>The first screen is the bait.</p>
+      <p>The screens thereafter are designed to make you feel it.</p>
+    </div>
+  </div>
+</header>
+
+<!-- IMAGE: JustFixIt landing page screenshot -->
+<div class="hero-figure">
+  <figure>
+    <img src="justfixit-hero.png"
+         alt="JustFixIt landing page: serif 'JustFixIt' wordmark with subtitle 'Every problem has a solution. Find yours.' and a Start solving button.">
+    <figcaption class="figcap">JustFixIt — Landing Page</figcaption>
+  </figure>
+</div>
+
+<!-- =========================================================
+     OPENING — Is design a force for good?
+     ========================================================= -->
+<section class="opening">
+  <div class="col-text">
+    <div class="meta-line">
+      ArtCenter MDes · People, Environments, Society · Spring 2026 · Solo Project
+    </div>
+
+    <h2 class="section-title">Is design a force for good?</h2>
+
+    <div class="lead">
+      <p>That was the question Dr. Dimeji Onafuwa — Director of UX Research at Microsoft — asked us at the beginning of our first class. JustFixIt is my answer: a Trojan Horse that looks like a problem-solver and slowly makes the act of solving impossible.</p>
+      <p>Pick a social issue. Adjust some sliders. Watch your solution take effect.</p>
+      <p>Fifteen minutes later, you should not have solved anything — but you should be able to feel why.</p>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     BARRIO LOGAN
+     ========================================================= -->
+<section class="reveal">
+  <div class="col-text">
+    <div class="section-label">About 15 Minutes From Where I Live</div>
+    <div class="prose">
+      <p>If you drive south on I-5 out of downtown San Diego, you pass a neighborhood called Barrio Logan: one of the oldest Chicano communities in San Diego.</p>
+    </div>
+  </div>
+
+  <!-- IMAGE GRID: 3 Barrio Logan photos (2 top, 1 bottom) -->
+  <div class="image-grid col-media reveal">
+    <div class="row">
+      <img src="justfixit-mural.png"
+           alt="Chicano Park mural by Burak Arik, 2023.">
+      <img src="justfixit-herbgarden.png"
+           alt="Chicano Park Herb Garden community photo.">
+    </div>
+    <div class="row single">
+      <img src="justfixit-streetscape.png"
+           alt="Barrio Logan streetscape with the neighborhood archway over the street.">
+    </div>
+    <span class="credits">Burak Arik, Chicano Park, 2023 (left).&nbsp;&nbsp;·&nbsp;&nbsp;Chicano Park Herb Garden Community (right).&nbsp;&nbsp;·&nbsp;&nbsp;Barrio Logan streetscape (bottom).</span>
+  </div>
+
+  <div class="col-text">
+    <div class="prose">
+      <p>The I-5 I just talked about?</p>
+      <p>The state built it directly through the heart of Barrio Logan in the 1960s, physically splitting the community in half.</p>
+    </div>
+  </div>
+</section>
+
+<!-- IMAGE: Full-bleed freeway with overlay -->
+<div class="freeway reveal">
+  <img src="justfixit-freeway.png"
+       alt="Aerial view of freeway interchange cutting through a neighborhood.">
+  <div class="freeway-overlay">
+    <div class="stat-line">NO VOTE.</div>
+    <div class="stat-line">NO ALTERNATIVE ROUTING.</div>
+  </div>
+</div>
+
+<section>
+  <div class="col-text">
+    <div class="prose reveal">
+      <p>Barrio Logan became a zone on a map — a community treated as an acceptable cost of optimizing regional traffic flow. Then, in 1978, the city's community plan zoned polluting shipyard industries right next to its homes and schools.</p>
+      <p>Two different departments.</p>
+    </div>
+
+    <!-- Displaced "Industrial here / Residential there" -->
+    <div class="displaced">
+      <span class="left">Industrial here,</span>
+      <span class="right">Residential there.</span>
+    </div>
+
+    <p class="same-block">
+      Except <span class="here">here</span> and <span class="there">there</span> were now on the same block.
+    </p>
+
+    <div class="prose reveal">
+      <p>Today, Barrio Logan sits in the top five percent most polluted areas in California.</p>
+    </div>
+
+    <!-- 85-95% stat -->
+    <div class="stat-block reveal">
+      <div class="stat-number" data-t1="85" data-t2="95">85–95%</div>
+      <div class="stat-caption">Higher <span class="em-cancer">cancer</span> risk than the rest of the United States — EPA</div>
+    </div>
+
+    <div class="prose reveal">
+      <p>The community spent over forty years fighting for a plan to fix this. In 2013, after five years and more than fifty community meetings, the City Council approved one. Nine months later, the shipbuilding industry funded a citywide referendum and overturned it — the only neighborhood in San Diego whose plan was decided by voters across the entire city.</p>
+    </div>
+
+    <!-- Timeline -->
+    <div class="timeline">
+      <div class="timeline-labels">
+        <span>2008–2013</span>
+        <span>2014</span>
+        <span>2021</span>
+      </div>
+      <div class="timeline-track">
+        <div class="timeline-line"></div>
+        <div class="timeline-dots">
+          <span class="dot dot-1"></span>
+          <span class="dot dot-2"></span>
+          <span class="dot dot-3"></span>
+        </div>
+      </div>
+      <div class="timeline-captions">
+        <span>50+ meetings. Plan approved.</span>
+        <span>Overturned in 9 months.</span>
+        <span>New plan passed.</span>
+      </div>
+    </div>
+
+    <div class="prose reveal">
+      <p>A new plan finally passed in 2021. But even as those protections were being signed, Barrio Logan resident and policy advocate Julie Corrales pointed out something:</p>
+    </div>
+
+    <!-- Pull quote -->
+    <div class="pullquote reveal">
+      <span class="qmark">"</span>
+      <blockquote>On top of pollution residents live with daily, they are now threatened by gentrification.</blockquote>
+      <div class="attr">Julie Corrales · Barrio Logan resident & advocate · Environmental Health Coalition</div>
+    </div>
+
+    <div class="prose reveal">
+      <p>By raising land values through revitalization, the new plan was giving developers incentives to tear down the very housing it was meant to protect. The fix was accelerating the displacement it was designed to prevent.</p>
+      <p>Every intervention in Barrio Logan was logical inside its own framework. The freeway was infrastructure. The zoning was administrative. The plan was policy.</p>
+      <p>But the community is still facing the threat of displacement. Because the framework itself — the one that separates infrastructure from community, zoning from health, and policy from lived experience — is built on a worldview that can only see one variable at a time.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Three-line display -->
+<section class="display-three reveal">
+  <span class="l1">We know the world is systemic.</span>
+  <span class="l2">But</span>
+  <span class="l3">we are forced to act as if it is not.</span>
+</section>
+
+<!-- =========================================================
+     400-YEAR INHERITANCE
+     ========================================================= -->
+<section>
+  <div class="col-text reveal">
+    <div class="section-label">A 400-Year Inheritance</div>
+    <h2 class="section-title">This worldview has a history.</h2>
+    <div class="prose">
+      <p>What happened in Barrio Logan isn't unique. It's a pattern — one with a four-hundred-year genealogy.</p>
+    </div>
+  </div>
+
+  <div class="inheritance">
+    <div class="era">
+      <div class="era-card">
+        <div class="era-period">17th Century</div>
+        <div class="era-name">The Scientific<br>Revolution</div>
+        <div class="era-diagram">⊙ — ⊙</div>
+      </div>
+      <div class="era-body">
+        <p>Relational understandings of reality were replaced with a mechanical one. The universe became machine — modular, predictable, composed of parts you could isolate and control.</p>
+        <p>And once reality is a machine, problems become mechanical failures you can isolate and repair.</p>
+      </div>
+    </div>
+
+    <div class="era">
+      <div class="era-card">
+        <div class="era-period">18th–19th Century</div>
+        <div class="era-name">Industrial<br>Revolution</div>
+        <div class="era-diagram">▢ ▢ ▢ ▢<br>Interchangeable parts</div>
+      </div>
+      <div class="era-body">
+        <p>The Industrial Revolution only served to operationalize this.</p>
+        <p>Taylorism broke work into measurable units, treated workers as interchangeable parts, and optimized for output.</p>
+        <p>Complexity became something to streamline, not something to hold.</p>
+      </div>
+    </div>
+
+    <div class="era">
+      <div class="era-card">
+        <div class="era-period">20th Century</div>
+        <div class="era-name">Bureaucracy</div>
+        <div class="era-diagram">[Dept&nbsp;A]&nbsp;&nbsp;[Dept&nbsp;B]</div>
+      </div>
+      <div class="era-body">
+        <p>By the 20th century, this logic entered governance.</p>
+        <p>Bureaucracies simplified entangled realities into departments — housing here, health there, transportation somewhere else — each with their own budgets, metrics, and jurisdictions.</p>
+      </div>
+    </div>
+
+    <div class="era">
+      <div class="era-card">
+        <div class="era-period">21st Century</div>
+        <div class="era-name">AI &amp; Optimization</div>
+        <div class="era-diagram">input → model → output</div>
+      </div>
+      <div class="era-body">
+        <p>And now, in the 21st century, AI and data systems have taken on the role of the mechanical-worldview <em>automator</em>.</p>
+        <p>Models define a target, isolate inputs, and optimize the output. What can't be quantified becomes invisible.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-text reveal">
+    <div class="prose">
+      <p>Barrio Logan is what happens when every layer of this worldview stacks on top of a single community over time.</p>
+    </div>
+    <ul class="prose-list">
+      <li>A freeway that optimized traffic and severed a neighborhood.</li>
+      <li>Zoning that categorized land use and poisoned residents.</li>
+      <li>A bureaucracy that took forty years to produce a plan.</li>
+      <li>A policy fix that may accelerate the displacement it was designed to prevent.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- THROUGHLINE -->
+<section class="vrhythm">
+  <div class="col-text reveal">
+    <div class="section-label">The Throughline</div>
+    <div class="prose">
+      <p>We inherited a worldview that treats problems as discrete because it first treated reality as decomposable. And we built institutions and technologies that make it structurally impossible to act any other way.</p>
+    </div>
+  </div>
+</section>
+
+<!-- STAKEHOLDER MAP -->
+<section>
+  <div class="col-text reveal">
+    <div class="section-label">The Stakeholder Map</div>
+    <div class="prose">
+      <p>Barrio Logan is one neighborhood. But the pattern it reveals plays out across a variety of complex social issues.</p>
+      <p>The brief required a pluriversal stakeholder map — a representation of the problem space that includes perspectives beyond the dominant Western framework.</p>
+      <p>When I mapped this out, a divide became clear.</p>
+    </div>
+  </div>
+
+  <!-- IMAGE: stakeholder map (local PNG, clicks through to Imgur full-resolution) -->
+  <figure class="map-image reveal">
+    <a href="https://i.imgur.com/cFapbeh.png" target="_blank" rel="noopener" aria-label="Open stakeholder map at full resolution">
+      <img src="justfixit-stakeholdermap.png"
+           alt="Pluriversal stakeholder map showing mechanistic systems on the left and relational/non-Western perspectives on the right, connected through shared problem nodes.">
+    </a>
+    <figcaption class="figcap">Click image to view at full resolution</figcaption>
+  </figure>
+
+  <div class="split reveal">
+    <div class="col">
+      <h3>Mechanistic Systems</h3>
+      <p>On one side, mechanistic systems like governance, funding, technology, and education all solve by simplifying complexity into manageable, categorical, fundable units.</p>
+      <p>A problem must be measurable to receive funding. A problem must be a dataset with a target variable to be optimized.</p>
+    </div>
+    <div class="col">
+      <h3>Relational Perspectives</h3>
+      <p>On the other side are relational perspectives, like communities directly experiencing the problem, indigenous knowledge systems, and ecological frameworks.</p>
+      <p>Here, problems are viewed as emerging from relationships between systems, not just as isolated failures within them.</p>
+    </div>
+  </div>
+
+  <div class="col-text reveal">
+    <div class="prose">
+      <p>In between sits a group that includes <em>us</em>.</p>
+      <p>Designers, policy makers, students — often trained in mechanistic frameworks but increasingly confronted by what those frameworks can't see.</p>
+    </div>
+  </div>
+</section>
+
+<!-- DESIGN QUESTION -->
+<section class="design-question reveal">
+  <div class="section-label label">The Design Question</div>
+  <p class="q">How do you build something that doesn't explain this — but lets someone <em>experience</em> it?</p>
+  <span class="rule"></span>
+</section>
+
+<!-- =========================================================
+     INSIDE THE ARTIFACT
+     ========================================================= -->
+<section>
+  <div class="col-text reveal">
+    <div class="section-label">Inside the Artifact</div>
+    <div class="prose">
+      <p>On the surface, JustFixIt is a gamified problem-solving tool. You pick a social issue, adjust variables, and try to optimize your way to a solution.</p>
+      <p>The landing screen you saw at the top of this page is the voice of solutionism itself — confident, inviting you to play.</p>
+    </div>
+  </div>
+
+  <!-- IMAGE: Problem selection screen -->
+  <figure class="artifact-figure reveal">
+    <img src="justfixit-problemselect.png"
+         alt="JustFixIt problem-selection screen showing four cards: Climate Change, Housing Crisis, Food Insecurity, and Education Inequality.">
+    <figcaption class="figcap">Problem selection. The first lie.</figcaption>
+  </figure>
+
+  <div class="col-text reveal">
+    <div class="prose">
+      <p>Pick a problem. They're presented as discrete cards — bounded, selectable, separate.</p>
+      <p>That framing is already the first lie. We know they're not separate. But JustFixIt needs you to experience choosing one as if they are.</p>
+    </div>
+  </div>
+
+  <!-- IMAGE: Starting dashboard for climate change -->
+  <figure class="artifact-figure reveal">
+    <img src="justfixit-dashboard-1-start.png"
+         alt="JustFixIt climate-change dashboard. Sliders for policy strength, renewable funding, tech innovation, infrastructure change, and consumer behavior on the left; a node map on the right showing Climate Change connected to Lithium Mining Crisis.">
+    <figcaption class="figcap">The starting dashboard for climate change. After the first adjustment, the system shows what's about to happen.</figcaption>
+  </figure>
+
+  <div class="col-text reveal">
+    <div class="prose">
+      <p>The dashboard has five variables on the left — policy strength, renewable funding, tech innovation, infrastructure change, and consumer behavior.</p>
+      <p>The sliders have no numbers. They run from "Voluntary" to "Mandated," "Defunded" to "Mass investment." I removed the numbers because users were optimizing toward scores that meant nothing in the end. The absence invites <em>instinct over calculation</em> — which is itself the recognition the artifact is after.</p>
+    </div>
+  </div>
+
+  <!-- No-number slider demo — embodies the design decision described above -->
+  <div class="slider-demo reveal">
+    <div class="slider-labels">
+      <span>Voluntary</span>
+      <span>Mandated</span>
+    </div>
+    <input type="range" min="0" max="100" value="50" step="1" class="slider-input"
+           aria-label="A demonstration policy slider with no numerical readout. Drag to feel the absence.">
+    <p class="slider-microcopy" aria-live="polite"></p>
+  </div>
+
+  <div class="col-text reveal">
+    <div class="prose">
+      <p>Push renewable funding up. A new node appears: Lithium Mining Crisis. Its explanation is shown in the yellow box: the battery demand from your choice drives extraction, creating environmental and labor crises in regions most of us will never visit.</p>
+      <p>You didn't choose to enter this problem.</p>
+      <p>Let's just say JustFixIt has a habit of not respecting the boundaries you draw around it.</p>
+    </div>
+  </div>
+
+  <!-- IMAGE: Recursive node dashboard -->
+  <figure class="artifact-figure reveal">
+    <img src="justfixit-dashboard-2-recursive.png"
+         alt="JustFixIt dashboard reorganized around a new node (Lithium Mining Crisis) with its own variables and connections to the broader map.">
+    <figcaption class="figcap">Click any new node. It becomes its own dashboard.</figcaption>
+  </figure>
+
+  <div class="col-text reveal">
+    <div class="prose">
+      <p>Each new node is itself a problem space you can enter. Click Lithium Mining Crisis and the dashboard reorganizes around it — new variables, new sliders, new ripple effects. The artifact is recursive. Every fix doesn't just produce new problems. It produces <em>new problem spaces</em>, each with its own logic.</p>
+      <p>Each node is draggable — you can physically arrange this system yourself. The mess you're looking at? You built it. The dragging makes the player feel authorship over the complexity, not just observe it.</p>
+    </div>
+  </div>
+
+  <!-- IMAGE: Converging dashboard, with two pop-out callouts -->
+  <figure class="artifact-figure with-callouts reveal">
+    <div class="callout-stage">
+      <img class="callout-base" src="justfixit-dashboard-3-converging.png"
+           alt="JustFixIt climate-change dashboard around decision five. A 'Converging! The system is stabilizing.' banner sits over the system map; the Solution Progress panel on the left shows Score 67, Decisions 5, Nodes 6.">
+      <img class="callout callout-converging" src="justfixit-callout-converging.png" alt="" aria-hidden="true">
+      <img class="callout callout-progress" src="justfixit-callout-progress.png" alt="" aria-hidden="true">
+    </div>
+    <figcaption class="figcap">Around decision five, the system appears to stabilize.</figcaption>
+  </figure>
+
+  <div class="col-text reveal">
+    <div class="prose">
+      <p>The score ticks up. The text reads <em>"Converging."</em> You feel like you're winning.</p>
+      <p>This is also a lie — a false plateau I designed, modeled on how real policy cycles work. Policies pass. Progress is declared while the complexity reorganizes underneath.</p>
+    </div>
+  </div>
+
+  <!-- IMAGE: Decision Profile appears, with pop-out callout -->
+  <figure class="artifact-figure with-callouts reveal">
+    <div class="callout-stage">
+      <img class="callout-base" src="justfixit-dashboard-4-profile.png"
+           alt="JustFixIt dashboard at decision seven. A Decision Profile panel appears in the corner showing which levers the player has been reaching for: Funding, Regulation, Community, Market Forces, Technology.">
+      <img class="callout callout-decision-profile" src="justfixit-callout-decision-profile.png" alt="" aria-hidden="true">
+    </div>
+    <figcaption class="figcap">By decision seven, a Decision Profile appears in the corner.</figcaption>
+  </figure>
+
+  <div class="col-text reveal">
+    <div class="prose">
+      <p>At this point, the plateau shatters. New nodes flood in. The score drops. And a Decision Profile appears in the corner — tracking which levers you reached for thus far. Funding. Regulation. Community. Market forces. Technology.</p>
+      <p>This is the most important moment in the artifact. It isn't asking you to solve <em>differently</em>. It's showing you that the way you solve reveals the worldview you operate inside. If you consistently reach for funding levers and never touch the community ones — that isn't a mistake.</p>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     THE RECKONING — full-bleed dark
+     ========================================================= -->
+<section class="reckoning" id="reckoning">
+  <div class="col-text reveal">
+    <div class="label-dark">The Reckoning</div>
+    <div class="prose">
+      <p>By decision ten, the interface drops the mask. The progress bar glitches and vanishes. A single button remains: <em>Continue anyway.</em></p>
+    </div>
+  </div>
+
+  <!-- IMAGE: Glitched interface -->
+  <figure class="artifact-figure reveal">
+    <img src="justfixit-reckoning-glitch.png"
+         alt="JustFixIt interface in glitch state. Institutional Friction notices appear; sliders desaturate; a single 'Continue anyway' button remains.">
+  </figure>
+
+  <div class="reckoning-display reveal">
+    <p class="line">This was never a problem to solve.<br>It was a system to understand.</p>
+  </div>
+
+  <div class="col-text reveal">
+    <div class="prose">
+      <p>If you click <em>Continue anyway</em>, the artifact ends in Reflection Mode.</p>
+      <p>The sliders disappear entirely. What's left is the map you built, the decisions you made, and your worldview reflected back at you.</p>
+    </div>
+  </div>
+
+  <!-- IMAGE: Reflection mode -->
+  <figure class="artifact-figure reveal">
+    <img src="justfixit-reckoning-reflection.png"
+         alt="JustFixIt Reflection Mode. The sliders are gone; what remains is the full node map the player built, with the message 'You didn't solve climate change' at the top.">
+  </figure>
+
+  <div class="col-text reveal">
+    <div class="prose">
+      <p>You didn't solve climate change.</p>
+      <p>No one can.</p>
+      <p>Not because the problem is too hard, but because it was never a single problem.</p>
+      <p>Every intervention you made created new conditions, new tensions. The system didn't resist your solutions — it absorbed them and reorganized.</p>
+    </div>
+  </div>
+
+  <div class="epistemology reveal">
+    <p class="line">It's an epistemology.</p>
+  </div>
+</section>
+
+<!-- =========================================================
+     CONTRADICTION WORTH NAMING
+     ========================================================= -->
+<section style="padding-top: var(--space-9);">
+  <div class="col-text reveal">
+    <div class="section-label">The Contradiction Worth Naming</div>
+    <div class="prose">
+      <p>I built JustFixIt by vibe-coding with Claude. The artifact critiques solutionism — the reach for technological fixes without examining what we're optimizing for.</p>
+      <p>The tool I used to build it is one of the most powerful technological fixes available right now.</p>
+      <p>That isn't ironic. <strong>It's the position.</strong></p>
+      <p>AI is a powerful tool. Powerful tools don't excuse the work of thinking carefully about what we make and why. Using Claude to build a critique of solutionism is consistent with the thesis, not contradictory to it.</p>
+    </div>
+  </div>
+
+  <div class="work-line reveal">
+    <p class="line">The work isn't <em>don't use the tools</em>. The work is <em>don't let the tools think for you</em>.</p>
+  </div>
+</section>
+
+<!-- =========================================================
+     WHAT IT IS AND ISN'T
+     ========================================================= -->
+<section>
+  <div class="col-text reveal">
+    <div class="section-label">What It Is and Isn't</div>
+  </div>
+
+  <div class="cant-can reveal">
+    <div class="col">
+      <h3>What it can't do</h3>
+      <p>The ripple effects are authored, not emergent. A real system would surprise in ways that I can't script.</p>
+      <p>The variables are still sliders — still a mechanistic interface, even if the content pushes against that framework.</p>
+      <p>Choosing one problem from a grid of four is itself the categorical thinking the entire project critiques.</p>
+    </div>
+    <div class="col">
+      <h3>What it can do</h3>
+      <p>Create an experience of systemic complexity in fifteen minutes. It can make someone feel how targeted interventions generate consequences they didn't choose.</p>
+      <p>Surface assumptions a player didn't know they were carrying.</p>
+      <p>Make a person's own decision pattern legible to them as an epistemology, not a preference.</p>
+    </div>
+  </div>
+
+  <p class="iso-line reveal">JustFixIt is a tool built inside a mechanistic worldview. It can't escape the paradigm it critiques — but it can make someone feel the edges of it.</p>
+</section>
+
+<!-- =========================================================
+     REFLECTION
+     ========================================================= -->
+<section class="reflection">
+  <div class="col-text reveal">
+    <div class="section-label">Reflection</div>
+    <div class="prose">
+      <p>I started this project trying to understand why we frame complex problems as singular and solvable.</p>
+      <p>What I found is that this isn't a habit — it's an inheritance. A 400-year-old worldview baked into our institutions, our technologies, our funding structures, and into the way most of us were taught to think.</p>
+      <p>Barrio Logan showed me what that inheritance looks like when it lands on a single community across 60 years. JustFixIt was my attempt to make that same experience available in 15 minutes.</p>
+      <p>I don't think the answer is to abandon mechanistic thinking entirely. But we also need tools that remind us of what those frameworks can't see.</p>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     OUTRO
+     ========================================================= -->
+<section class="outro">
+  <p class="outro-line">JustFixIt doesn't fix it. But maybe it makes the walls a little more visible.</p>
+  <a href="https://mylo-source.github.io/JustFixItV1/" class="cta-button" target="_blank" rel="noopener">
+    Play the live prototype
+  </a>
+</section>
+
+<!-- =========================================================
+     FOOTER
+     ========================================================= -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-left">
+      <div class="name">Myra Manekia</div>
+      <div class="copyright">© 2026 Myra Manekia</div>
+    </div>
+    <div class="footer-right">
+      <a href="https://www.linkedin.com/in/myra-manekia/" target="_blank" rel="noopener">LinkedIn ↗</a>
+      <a href="mailto:manekiamyra@gmail.com">manekiamyra@gmail.com</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ──────────── Nav: scroll shadow + dark-mode while in Reckoning
+  const nav = document.querySelector('.nav');
+  const reckoning = document.getElementById('reckoning');
+  const updateNav = () => {
+    nav.classList.toggle('scrolled', window.scrollY > 8);
+    if (reckoning) {
+      const r = reckoning.getBoundingClientRect();
+      const navHeight = nav.offsetHeight;
+      const inside = r.top <= navHeight && r.bottom >= navHeight;
+      nav.classList.toggle('on-dark', inside);
+    }
+  };
+  window.addEventListener('scroll', updateNav, { passive: true });
+  updateNav();
+
+  // ──────────── Generic reveal observer
+  const revealIO = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealIO.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal, .displaced, .same-block').forEach(el => revealIO.observe(el));
+
+  // ──────────── Timeline observer (draws line + dots)
+  const tl = document.querySelector('.timeline');
+  if (tl) {
+    const tlIO = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          tl.classList.add('visible');
+          tlIO.unobserve(tl);
+        }
+      });
+    }, { threshold: 0.4 });
+    tlIO.observe(tl);
+  }
+
+  // ──────────── Inheritance cards stagger
+  const eras = document.querySelectorAll('.era');
+  if (eras.length) {
+    const eraIO = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const idx = Array.from(eras).indexOf(entry.target);
+          entry.target.style.transitionDelay = `${idx * 120}ms`;
+          entry.target.classList.add('visible');
+          eraIO.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.25 });
+    eras.forEach(el => eraIO.observe(el));
+  }
+
+  // ──────────── Stat count-up (85–95%, both numbers animate)
+  const stat = document.querySelector('.stat-number');
+  if (stat) {
+    const t1 = parseInt(stat.dataset.t1, 10);
+    const t2 = parseInt(stat.dataset.t2, 10);
+    // Reset before user can scroll into view
+    stat.textContent = '0–0%';
+    let started = false;
+    const statIO = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && !started) {
+          started = true;
+          const duration = 1600;
+          const startTime = performance.now();
+          const tick = (now) => {
+            const t = Math.min(1, (now - startTime) / duration);
+            // ease-out cubic
+            const eased = 1 - Math.pow(1 - t, 3);
+            const n1 = Math.round(t1 * eased);
+            const n2 = Math.round(t2 * eased);
+            stat.textContent = `${n1}–${n2}%`;
+            if (t < 1) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+          statIO.unobserve(stat);
+        }
+      });
+    }, { threshold: 0.5 });
+    statIO.observe(stat);
+  }
+
+  // ──────────── No-number slider demo
+  // First drag triggers a one-time italic line that fades in, then out.
+  // Subsequent drags don't re-trigger — once is the point.
+  const slider = document.querySelector('.slider-input');
+  if (slider) {
+    const microcopy = document.querySelector('.slider-microcopy');
+    const setFill = () => slider.style.setProperty('--fill', `${slider.value}%`);
+    setFill();
+    let firstInteraction = false;
+    slider.addEventListener('input', () => {
+      setFill();
+      if (!firstInteraction) {
+        firstInteraction = true;
+        microcopy.textContent = "Your hand made a decision your brain didn't.";
+        microcopy.classList.add('visible');
+        setTimeout(() => microcopy.classList.remove('visible'), 4500);
+      }
+    });
+  }
+
+  // ──────────── Easter egg
+  console.log('%cvibe-coded with Claude', 'font-family: Fraunces, serif; font-style: italic; color: #8B3A2E; font-size: 14px;');
+</script>
+
+</body>
+</html>

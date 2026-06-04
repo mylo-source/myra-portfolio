@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design's Missing Language — Myra Manekia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAF7F2;
+    --bg-subtle: #F2EDE5;
+    --text: #1A1814;
+    --text-muted: #6B655C;
+    --accent: #8B3A2E;
+    --accent-dark: #6F2D24;
+    --border: #E5DFD4;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ─────────────────────────────────────── NAV */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: rgba(250, 247, 242, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .logo {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .nav-links {
+    display: flex;
+    gap: 40px;
+  }
+  .nav-links a {
+    font-size: 14px;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.3s var(--ease);
+  }
+  .nav-links a:hover,
+  .nav-links a.active { color: var(--accent); }
+
+  /* ─────────────────────────────────────── HEADER */
+  header.essay-header {
+    padding: 200px 48px 80px;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-muted);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 56px;
+    transition: color 0.3s var(--ease), gap 0.3s var(--ease);
+    opacity: 0;
+    animation: fadeUp 0.9s var(--ease) 0.1s forwards;
+  }
+  .back-link:hover { color: var(--accent); gap: 12px; }
+  .back-link .arrow { display: inline-block; transition: transform 0.3s var(--ease); }
+  .back-link:hover .arrow { transform: translateX(-2px); }
+
+  .meta {
+    font-size: 13px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-weight: 500;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.9s var(--ease) 0.25s forwards;
+  }
+
+  h1.title {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(40px, 5.5vw, 56px);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 16px;
+    opacity: 0;
+    animation: fadeUp 1.1s var(--ease) 0.35s forwards;
+  }
+  h1.title .subtitle {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--text-muted);
+  }
+
+  /* ─────────────────────────────────────── ESSAY BODY */
+  main.essay {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 48px 120px;
+  }
+
+  /* Definition callout */
+  .definition {
+    background: var(--bg-subtle);
+    border-left: 3px solid var(--accent);
+    padding: 36px 40px;
+    margin-bottom: 80px;
+    border-radius: 2px;
+    opacity: 0;
+    animation: fadeUp 1s var(--ease) 0.55s forwards;
+  }
+  .definition .term {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+  }
+  .definition .term em {
+    font-style: italic;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+  .definition p {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+  .definition p:last-child { margin-bottom: 0; }
+  .definition .design-note {
+    color: var(--text-muted);
+    font-size: 15px;
+    padding-top: 8px;
+  }
+  .definition .design-note em { color: var(--text); font-weight: 500; }
+
+  /* Sections */
+  section.chapter {
+    margin-bottom: 72px;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 1s var(--ease), transform 1s var(--ease);
+  }
+  section.chapter.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .chapter-label {
+    font-size: 12px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-weight: 500;
+    margin-bottom: 28px;
+    display: block;
+  }
+
+  .chapter p {
+    font-family: 'Inter', sans-serif;
+    font-size: 17px;
+    line-height: 1.75;
+    color: var(--text);
+    margin-bottom: 22px;
+  }
+  .chapter p:last-child { margin-bottom: 0; }
+
+  .chapter em {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  .chapter strong {
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  /* Italic lead-in for folded sub-prompts */
+  .lead-in {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 500;
+    color: var(--text);
+    margin-right: 6px;
+  }
+
+  /* Pull-quote style (Ava's italic dialogue) */
+  .dialogue {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 19px;
+    line-height: 1.6;
+    color: var(--text);
+    padding: 8px 0 8px 24px;
+    border-left: 2px solid var(--border);
+    margin-bottom: 22px !important;
+  }
+
+  /* Figures */
+  figure {
+    margin: 40px 0 44px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 1s var(--ease), transform 1s var(--ease);
+  }
+  figure.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  figure img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 4px;
+  }
+  figcaption {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 16px;
+    padding: 0 16px;
+  }
+
+  /* Closing italic line */
+  .closing {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.5;
+    color: var(--text);
+    text-align: center;
+    margin: 96px 0 80px;
+    padding: 0 24px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 1.2s var(--ease), transform 1.2s var(--ease);
+  }
+  .closing.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Reference */
+  .reference {
+    border-top: 1px solid var(--border);
+    padding-top: 32px;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 1s var(--ease), transform 1s var(--ease);
+  }
+  .reference.visible { opacity: 1; transform: translateY(0); }
+  .reference-label {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+  .reference-citation {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+  .reference-citation em {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+  }
+
+  /* ─────────────────────────────────────── FOOTER (site-wide) */
+  .footer {
+    margin-top: 64px;
+    background: var(--bg-subtle);
+    padding: 56px 0;
+    font-size: 14px;
+  }
+  .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    justify-content: space-between;
+  }
+  @media (min-width: 768px) {
+    .footer-inner {
+      padding: 0 48px;
+      flex-direction: row;
+      align-items: center;
+    }
+  }
+  .footer-left .name { font-weight: 500; margin-bottom: 2px; color: var(--text); }
+  .footer-left .copyright { color: var(--text-muted); font-size: 13px; }
+  .footer-right { display: flex; gap: 40px; flex-wrap: wrap; }
+  .footer-right a {
+    color: var(--text);
+    text-decoration: none;
+    transition: color 0.3s var(--ease);
+    position: relative;
+    padding: 2px 0;
+  }
+  .footer-right a::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.45s var(--ease);
+  }
+  .footer-right a:hover { color: var(--accent); }
+  .footer-right a:hover::after { transform: scaleX(1); }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─────────────────────────────────────── RESPONSIVE */
+  @media (max-width: 768px) {
+    .nav-inner { padding: 18px 24px; }
+    .nav-links { gap: 24px; }
+    header.essay-header { padding: 160px 24px 60px; }
+    main.essay { padding: 0 24px 80px; }
+    footer { padding: 48px 24px 32px; }
+    .definition { padding: 28px 24px; margin-bottom: 64px; }
+    .definition .term { font-size: 19px; }
+    .chapter p { font-size: 16px; }
+    .dialogue { font-size: 17px; padding-left: 18px; }
+    .closing { font-size: 19px; margin: 72px 0 64px; }
+    section.chapter { margin-bottom: 56px; }
+    figure { margin: 32px 0 36px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- vibe-coded with Claude · myndfuldesign.com · 2026 -->
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">MM</a>
+    <div class="nav-links">
+      <a href="about.html">About</a>
+      <a href="writing.html" class="active">Writing</a>
+    </div>
+  </div>
+</nav>
+
+<header class="essay-header">
+  <a href="writing.html" class="back-link"><span class="arrow">←</span> Back to writing</a>
+  <div class="meta">ArtCenter MDes · Oct 2025</div>
+  <h1 class="title">Design's Missing Language:<br><span class="subtitle">Unlocking the Power of Cognition</span></h1>
+</header>
+
+<main class="essay">
+
+  <!-- DEFINITION CALLOUT -->
+  <div class="definition">
+    <div class="term">Context-Dependent Memory <em>(noun)</em></div>
+    <p>Our brains remember best when the world we see around us matches the one we learned in.</p>
+    <p class="design-note"><em>In design:</em> Experiences, digital or otherwise, resonate when the interface or product resembles the world it belongs to.</p>
+  </div>
+
+  <!-- §1 PICTURE THIS -->
+  <section class="chapter">
+    <span class="chapter-label">Picture This</span>
+    <p>A designer named Ava encounters the ever-so familiar challenge of a new user problem at the edtech firm where she currently works.</p>
+
+    <figure>
+      <img src="avaatwork-1.png" alt="Illustration of Ava at her desk with coffee, laptop, and design tools.">
+      <figcaption>Ava at Work, Somewhere Between Caffeine and Creativity</figcaption>
+    </figure>
+
+    <p><span class="lead-in">The problem?</span> Their current online learning platform, whilst praised by leadership for its clean interface and sleek visuals, is not achieving its ultimate goal: helping students <em>apply</em> what they learn.</p>
+
+    <p><span class="lead-in">The good news?</span> Students are acing the digital practice quizzes.</p>
+
+    <p><span class="lead-in">The bad?</span> They're faltering on real-life exams.</p>
+
+    <figure>
+      <img src="Studentsexam-2.png" alt="Split illustration: clean digital quiz interface on the left, a stressed student writing on paper at a desk on the right.">
+      <figcaption>Students Excelling in the Digital, But the Exam Room? A Different Story</figcaption>
+    </figure>
+
+    <p>That's one big problem…</p>
+  </section>
+
+  <!-- §2 THE INTUITIVE FIX -->
+  <section class="chapter">
+    <span class="chapter-label">The Intuitive Fix</span>
+
+    <p>As a self-professed visual enthusiast (as I am sure many of us designers are), Ava begins by doing what feels most intuitive: <strong>refining the interface</strong>. She experiments with new layout structures and content reorganization.</p>
+
+    <figure>
+      <img src="InterfaceRef-3.png" alt="Illustration of a designer at a monitor with layout sketches, color palettes, and content reorganization tools.">
+      <figcaption>Interface Refinements</figcaption>
+    </figure>
+
+    <p>She even goes so far as to venture into lesson gamification (all thanks to her late-night Duolingo sessions)!</p>
+
+    <figure>
+      <img src="gamif-4.png" alt="Four-panel gamification illustration: progress bars, dashboards, quiz mockups, and a study companion app.">
+      <figcaption>Gamified, but Grasped?</figcaption>
+    </figure>
+
+    <p>Confident in her redesigned platform, it's straight to usability testing.</p>
+
+    <p><span class="lead-in">The result?</span></p>
+
+    <figure>
+      <img src="GameOver-5.png" alt="A 'Game Over' badge in terracotta on a pastel background.">
+    </figure>
+
+    <p>No improvement. The gap between students' digital practice and real performance remain exactly the same…</p>
+  </section>
+
+  <!-- §3 A SHIFT IN PERSPECTIVE -->
+  <section class="chapter">
+    <span class="chapter-label">A Shift in Perspective</span>
+
+    <p>Disappointed and confused, she lingers back into the after-hours barren office, staring at a screen that now feels adversarial.</p>
+
+    <p>Out of the corner of her eye, a book left open on a colleague's desk catches her attention — <em>Trends in Cognitive Science 2007</em>.</p>
+
+    <figure>
+      <img src="TrendsinCogSci-6.png" alt="Illustration of a person reading a book titled 'Trends Cognitive Science 2007' next to a tablet.">
+    </figure>
+
+    <p>Out of curiosity, she flips through the pages.</p>
+
+    <p>And unknowingly, is transported away from the designer's seat and into the user's mind.</p>
+
+    <p>A thought began to form:</p>
+
+    <p class="dialogue">"What if the problem has nothing to do with <strong>what</strong> is on the interface… but <strong>how</strong> it is being received?"</p>
+
+    <figure>
+      <img src="DesignSpeak-7.png" alt="Illustration of two people facing each other at a laptop with a large X between them, showing a communication breakdown.">
+      <figcaption>When a design speaks, but the user's mind mishears</figcaption>
+    </figure>
+  </section>
+
+  <!-- §4 THE COGNITIVE REALIZATION -->
+  <section class="chapter">
+    <span class="chapter-label">The Cognitive Realization</span>
+
+    <p>With her attention now engrossed, she lands on a particular study, <em>"Augmenting Context-Dependent Memory"</em> by Jeanine K. Stefanucci and colleagues (2007).</p>
+
+    <p>Little did she know that she was about to be exposed to the power of <strong>context</strong> in aiding digital memory retention.</p>
+
+    <p>The study found that when interfaces contained information accompanied by additional associated spatial, aural, and visual contexts, memory performance increased by 131% (yes, you read that right) compared to the same information presented on generic, sterile, context-free interfaces (ie. what you see as you read this article).</p>
+
+    <figure>
+      <img src="Context-8.png" alt="Side-by-side diagram comparing a sterile interface with simple cards to a contextual interface with rich visuals, audio cues, and spatial depth.">
+      <figcaption>Context: The 131% Memory Booster</figcaption>
+    </figure>
+
+    <p>Something clicks.</p>
+
+    <p>The problem wasn't <em>visual</em>; it was <em>cognitive</em>.</p>
+
+    <p><span class="lead-in">The realization?</span> Students were learning within one digital context but being tested in an entirely different one.</p>
+
+    <p>In other words,</p>
+
+    <p>The current platform lacked the contextual cues successfully mimicking the exam room.</p>
+  </section>
+
+  <!-- §5 A REDESIGN GROUNDED IN COGNITION -->
+  <section class="chapter">
+    <span class="chapter-label">A Redesign Grounded in Cognition</span>
+
+    <p><span class="lead-in">Ava's solution?</span> Bring context into the platform so that it <em>realistically</em> resembles where the information needs to be recalled.</p>
+
+    <p>That night, she began redesigning the quiz experience — not as a prettier interface, but as a <em>cognitively informed</em> one.</p>
+
+    <p>She introduced exam-like conditions: timers, audio announcements, mixed question formats, and subtle environmental cues to mimic real exam settings.</p>
+
+    <figure>
+      <img src="AvaMindfulDesigning-9.png" alt="Illustration of Ava designing a quiz interface that includes a timer, audio announcement, mixed question formats, and environmental cues.">
+      <figcaption>Ava Designing for the Mind</figcaption>
+    </figure>
+
+    <p>With newfound confidence, one now grounded in a <strong>cognitive</strong> <em>user-first</em> mindset, it's back to usability testing.</p>
+
+    <p><span class="lead-in">The result?</span></p>
+
+    <figure>
+      <img src="win-10.png" alt="A 'You Win!' badge in terracotta on a soft pastel background.">
+    </figure>
+
+    <p>Transformative.</p>
+
+    <p>Students not only retained more information on the platform but also performed significantly better in their actual exams.</p>
+
+    <p>Ava cracked the cognitive code.</p>
+  </section>
+
+  <!-- §6 DESIGN'S MISSING LANGUAGE -->
+  <section class="chapter">
+    <span class="chapter-label">Design's Missing Language</span>
+
+    <p>In design, it is not enough to focus solely on what's displayed or how users interact, but also on how it is encoded and retrieved in the mind of the user across different contexts.</p>
+
+    <p>Looking back, Ava couldn't help but think:</p>
+
+    <figure>
+      <img src="AvaWondering-11.png" alt="Illustration of a thoughtful designer at her computer with a question mark above her head.">
+    </figure>
+
+    <p class="dialogue">"Had I learned this in my design education, endless amounts of frustration and confusion could have been avoided.<br><br>If one of my required readings was a study from the journal I just read, I would be so much more equipped to design not just for the eye, but for the mind."</p>
+
+    <p>Ava's story is just one instance among countless design challenges where having a deeper cognitive foundation holds immense value.</p>
+
+    <p>It reveals <strong>design's missing language: cognition</strong>.</p>
+
+    <figure>
+      <img src="cognitionmissinglanguage-12.png" alt="Illustration of interface mockups, color palettes, and two puzzle pieces — one labeled 'Cognition' — about to connect.">
+    </figure>
+  </section>
+
+  <!-- §7 A CALL TO RELEARN HOW WE DESIGN -->
+  <section class="chapter">
+    <span class="chapter-label">A Call to Relearn How We Design</span>
+
+    <p>Ava's story isn't just about her; it's about us: a living, breathing, and growing creative community of designers, educators, and leaders.</p>
+
+    <p>Her story represents an avenue towards a larger problem (or rather, an opportunity) that today's design pedagogy faces:</p>
+
+    <p>A lack of <em>diverse cognitive understanding</em> in how we think, teach, and ultimately, design.</p>
+
+    <p>As a design student myself, I have encountered cognitive concepts and theories through single entry points, via avenues like heuristics.</p>
+
+    <p>However, this feels like a narrow lens into a much broader field.</p>
+
+    <figure>
+      <img src="heuristics-13.png" alt="Illustration of a designer trying to scale a brick wall labeled 'Heuristics,' with cognitive science concepts hovering on the other side.">
+      <figcaption>Hitting the Heuristics Wall</figcaption>
+    </figure>
+
+    <p>If design educators venture beyond these single entry points and explore cognition's rich history and studies exploring perception, memory, and decision-making (to name a few), their students could emerge from design education with not only an expanded designer skill set, but also a deeper understanding of what it means to create for <em>real humans, with real minds, and in real contexts.</em></p>
+  </section>
+
+  <!-- §8 RE-CENTERING MENTAL COMPLEXITY -->
+  <section class="chapter">
+    <span class="chapter-label">Re-centering Mental Complexity in an AI-Concentrated World</span>
+
+    <p>The call to better incorporate a <em>diverse cognitive understanding</em> into design curricula is especially relevant in today's AI-dominated landscape — one that continues to tap into every dimension of the lived experience.</p>
+
+    <p>I find that academic discussions are precariously tilting away from humans towards broader technology and AI advancements.</p>
+
+    <p>Thus, it is crucial to find ways to <strong>re-center humans</strong> in those discussions, especially when the designers of tomorrow are in the room.</p>
+
+    <figure>
+      <img src="AI-14.png" alt="Illustration of a scale balancing 'AI &amp; Tech Advancements' against 'Human Experience &amp; Cognition,' with designers of tomorrow standing below.">
+      <figcaption>Getting the Balance Right</figcaption>
+    </figure>
+
+    <p>I find that this approach is one of the many ways design education can both re-balance and <strong>re-value</strong> human complexity amongst the growing influence of LLMs, machine learning,</p>
+
+    <p>the list goes on….</p>
+  </section>
+
+  <!-- §9 MINDFUL DESIGN -->
+  <section class="chapter">
+    <span class="chapter-label">Mindful Design</span>
+
+    <p>If design education provides opportunities to deeply explore the cognitive building blocks of what humans respond to, beyond the single-entry-point walls that often define our first encounters with these ideas, the <em>Avas</em> of our world, along with design educators and students, can navigate user needs in ways more intricately linked to the mind.</p>
+
+    <figure>
+      <img src="mindfuldesign-15.png" alt="Illustration of a brain at the center of interconnected design tools, screens, and human figures — a vision of cognition-led design.">
+      <figcaption>The Future of Design: Unlocking the cognitive blueprints of the human experience.</figcaption>
+    </figure>
+
+    <p>A point will be reached in not just <em>creating</em>, but <em>speaking</em> to what makes a user human.</p>
+
+    <p>And maybe, that's what design has been missing all along.</p>
+  </section>
+
+  <!-- CLOSING ITALIC LINE -->
+  <p class="closing">To design for the future, we must remember the minds that interpret it; design's blueprint has always stemmed from the language of cognition.</p>
+
+  <!-- REFERENCE -->
+  <div class="reference">
+    <div class="reference-label">Reference</div>
+    <p class="reference-citation">Stefanucci, Jeanine &amp; OHargan, Shawn &amp; Proffitt, Dennis. (2007). Augmenting Context-Dependent Memory. <em>Journal of Cognitive Engineering and Decision Making. 1.</em> 391–404.</p>
+  </div>
+
+</main>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-left">
+      <div class="name">Myra Manekia</div>
+      <div class="copyright">© 2026 Myra Manekia</div>
+    </div>
+    <div class="footer-right">
+      <a href="https://www.linkedin.com/in/myra-manekia/" target="_blank" rel="noopener">LinkedIn ↗</a>
+      <a href="mailto:manekiamyra@gmail.com">manekiamyra@gmail.com</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Reveal sections, figures, closing line, and reference as they enter view
+  const revealTargets = document.querySelectorAll('section.chapter, figure, .closing, .reference');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {
+    threshold: 0.1,
+    rootMargin: '0px 0px -60px 0px'
+  });
+
+  revealTargets.forEach(el => observer.observe(el));
+
+  console.log('%cvibe-coded with Claude', 'color: #8B3A2E; font-family: Fraunces, serif; font-style: italic; font-size: 13px;');
+</script>
+
+</body>
+</html>

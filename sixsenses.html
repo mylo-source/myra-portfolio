@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Six Senses Dashboard — Myra Manekia</title>
+<meta name="description" content="Redesigning the Six Senses guest dashboard around calm efficiency. ArtCenter MDes · Interaction Design Studio · Fall 2025.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   DESIGN TOKENS — locked to portfolio system
+   ============================================================ */
+:root {
+  --bg:           #FAF7F2;
+  --bg-subtle:    #F2EDE5;
+  --text:         #1A1814;
+  --text-muted:   #6B655C;
+  --accent:       #8B3A2E;
+  --accent-dark:  #6F2D24;
+  --border:       #E5DFD4;
+
+  --font-serif:   'Fraunces', Georgia, serif;
+  --font-sans:    'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --space-1: 4px; --space-2: 8px; --space-3: 16px; --space-4: 24px;
+  --space-5: 32px; --space-6: 48px; --space-7: 64px; --space-8: 96px; --space-9: 128px;
+
+  --col-text:      720px;
+  --col-media:     880px;
+  --col-wide:      1080px;
+  --container-max: 1200px;
+
+  /* Standard easing for normal interactions */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Gentler easing for calm-design moments — settles slowly */
+  --ease-calm: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Shared breath cycle for all CTAs on this page */
+  --breath: 5s;
+}
+
+/* ============================================================
+   RESET
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+img, svg { display: block; max-width: 100%; }
+
+/* ============================================================
+   COLUMN HELPERS
+   ============================================================ */
+.col-text  { max-width: var(--col-text);  margin: 0 auto; padding: 0 var(--space-4); }
+.col-media { max-width: var(--col-media); margin: 0 auto; padding: 0 var(--space-4); }
+.col-wide  { max-width: var(--col-wide);  margin: 0 auto; padding: 0 var(--space-4); }
+@media (min-width: 768px) {
+  .col-text, .col-media, .col-wide { padding: 0 var(--space-6); }
+}
+
+/* ============================================================
+   NAVIGATION  (same pattern as justfixit.html)
+   ============================================================ */
+.nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  background: var(--bg);
+  z-index: 100;
+  padding: var(--space-3) 0;
+  transition: box-shadow 0.5s var(--ease-calm), padding 0.4s var(--ease-calm);
+}
+.nav.scrolled { box-shadow: 0 1px 0 var(--border); padding: var(--space-2) 0; }
+.nav-inner {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+  display: flex; justify-content: space-between; align-items: center;
+}
+@media (min-width: 768px) { .nav-inner { padding: 0 var(--space-6); } }
+.nav-logo {
+  font-family: var(--font-serif); font-size: 22px; font-weight: 500;
+  letter-spacing: 0.01em; position: relative; padding: 4px 0;
+  transition: color 0.8s var(--ease-calm);
+}
+.nav-logo::after {
+  content: ''; position: absolute; inset: auto 0 0 0;
+  height: 1px; background: currentColor;
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 1.2s var(--ease-calm);
+}
+.nav-logo:hover { color: var(--accent); }
+.nav-logo:hover::after { transform: scaleX(1); }
+.nav-links { display: flex; gap: var(--space-5); }
+@media (min-width: 768px) { .nav-links { gap: var(--space-6); } }
+.nav-links a {
+  font-size: 15px; position: relative; padding: 4px 0;
+  transition: color 0.8s var(--ease-calm);
+}
+.nav-links a::after {
+  content: ''; position: absolute; inset: auto 0 0 0;
+  height: 1px; background: currentColor;
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 1.2s var(--ease-calm);
+}
+.nav-links a:hover { color: var(--accent); }
+.nav-links a:hover::after { transform: scaleX(1); }
+
+/* ============================================================
+   TRIP TRACKER — ambient chrome (calm-design move #3)
+   Fixed top-right; mirrors Elena's Trip Tracker design decision
+   the reader will encounter later in the case study.
+   ============================================================ */
+.trip-tracker {
+  position: fixed;
+  top: 82px;
+  right: var(--space-6);
+  z-index: 99;
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.5s var(--ease-calm), top 0.4s var(--ease-calm);
+}
+.trip-tracker.nav-scrolled { top: 66px; }
+.trip-tracker.visible { opacity: 1; }
+.trip-tracker .stage {
+  display: inline-flex; align-items: center; gap: 6px;
+  transition: color 1.2s var(--ease-calm);
+}
+.trip-tracker .stage::before {
+  content: '';
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--border);
+  transition: background 1.2s var(--ease-calm), transform 1.2s var(--ease-calm);
+}
+.trip-tracker .stage.active {
+  color: var(--text);
+}
+.trip-tracker .stage.active::before {
+  background: var(--accent);
+  transform: scale(1.2);
+}
+.trip-tracker .sep {
+  color: var(--border);
+  font-size: 10px;
+}
+/* Hide on mobile — would crowd the nav */
+@media (max-width: 880px) {
+  .trip-tracker { display: none; }
+}
+
+/* ============================================================
+   BREATHING — shared rhythm across all CTAs on this page
+   (calm-design move #1)
+   ============================================================ */
+@keyframes breath {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(139, 58, 46, 0);
+  }
+  50% {
+    transform: scale(1.025);
+    box-shadow: 0 0 22px 0 rgba(139, 58, 46, 0.14);
+  }
+}
+@keyframes breath-subtle {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 1; }
+}
+
+/* ============================================================
+   PAGE TOP — holds the breathing back link
+   ============================================================ */
+.page-top {
+  padding-top: clamp(90px, 11vh, 130px);
+  padding-bottom: 0;
+}
+
+/* ============================================================
+   BACK LINK (breathing variant)
+   ============================================================ */
+.back-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 13px;
+  color: var(--text-muted);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 56px;
+  transition: color 0.8s var(--ease-calm), gap 0.8s var(--ease-calm);
+  opacity: 0;
+  animation:
+    fadeUp 1.2s var(--ease-calm) 0.2s forwards,
+    breath-subtle var(--breath) ease-in-out 1.6s infinite;
+}
+.back-link:hover { color: var(--accent); gap: 12px; animation-play-state: paused; opacity: 1; }
+.back-link .arrow { display: inline-block; transition: transform 0.8s var(--ease-calm); }
+.back-link:hover .arrow { transform: translateX(-3px); }
+
+/* ============================================================
+   HERO — italic Fraunces display, text-only
+   ============================================================ */
+.hero {
+  padding: var(--space-5) 0 var(--space-9);
+  text-align: center;
+}
+.meta-line {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: var(--space-5);
+}
+.hero-display {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(36px, 4.5vw + 14px, 64px);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  font-variation-settings: 'opsz' 80;
+  color: var(--text);
+  opacity: 0;
+  animation: fadeUp 1.4s var(--ease-calm) 0.4s forwards;
+  max-width: 880px;
+  margin: 0 auto;
+}
+
+/* ============================================================
+   DESIGNED SILENCE — vertical pauses between major sections
+   (calm-design move #2)
+   ============================================================ */
+.silence {
+  position: relative;
+  height: 220px;
+  pointer-events: none;
+}
+.silence::after {
+  content: '';
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  width: 5px; height: 5px;
+  background: var(--accent);
+  border-radius: 50%;
+  opacity: 0.35;
+}
+@media (max-width: 768px) {
+  .silence { height: 140px; }
+}
+
+/* ============================================================
+   GENERIC SECTION TYPOGRAPHY
+   ============================================================ */
+.section-label {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: var(--space-5);
+}
+.section-title {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(30px, 3vw + 12px, 44px);
+  line-height: 1.15;
+  letter-spacing: -0.018em;
+  font-variation-settings: 'opsz' 60;
+  color: var(--text);
+  margin-bottom: var(--space-6);
+}
+.prose p {
+  font-size: 17px;
+  line-height: 1.8;
+  color: var(--text-muted);
+  margin-bottom: var(--space-5);
+}
+.prose p:last-child { margin-bottom: 0; }
+.prose em, .prose i {
+  font-family: var(--font-serif); font-style: italic;
+  color: var(--text-muted); font-weight: 500;
+}
+.prose strong, .prose b { color: var(--text); font-weight: 600; }
+
+/* ============================================================
+   ARTIFACT HERO IMAGE — original dashboard
+   ============================================================ */
+.artifact-original {
+  margin: var(--space-8) auto;
+  max-width: 420px; /* mobile-screen scale */
+  padding: 0 var(--space-4);
+}
+.artifact-original img {
+  width: 100%; height: auto;
+  display: block;
+  border-radius: 18px;
+  box-shadow: 0 30px 60px -30px rgba(26,24,20,0.20);
+}
+.figcap {
+  display: block;
+  margin-top: var(--space-4);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* ============================================================
+   PERSONA PULL QUOTE — Elena
+   ============================================================ */
+.persona {
+  margin: var(--space-8) auto;
+  max-width: var(--col-text);
+  padding: 0 var(--space-4);
+}
+.persona blockquote {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(24px, 1.8vw + 14px, 32px);
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  font-variation-settings: 'opsz' 48;
+  color: var(--text);
+  margin: 0 0 var(--space-4) 0;
+  padding-left: var(--space-5);
+  border-left: 2px solid var(--accent);
+}
+.persona .attr {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding-left: var(--space-5);
+}
+
+/* ============================================================
+   FRICTION POINTS — 4 numbered items
+   ============================================================ */
+.friction-list {
+  list-style: none; padding: 0; margin: var(--space-7) 0 var(--space-7) 0;
+  display: grid; gap: var(--space-5);
+}
+.friction-list li {
+  padding-left: 0;
+}
+.friction-list h4 {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 19px;
+  color: var(--text);
+  margin-bottom: var(--space-2);
+  font-variation-settings: 'opsz' 30;
+}
+.friction-list p {
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--text-muted);
+  margin-bottom: 0;
+}
+
+/* ============================================================
+   THESIS DISPLAY — word-by-word reveal (calm-design move #4)
+   ============================================================ */
+.thesis-display {
+  margin: var(--space-8) auto;
+  max-width: 920px;
+  padding: 0 var(--space-4);
+  text-align: center;
+}
+.thesis-display .line {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(28px, 3vw + 12px, 44px);
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+  font-variation-settings: 'opsz' 64;
+  color: var(--text);
+  display: block;
+}
+.thesis-display .line + .line { margin-top: var(--space-4); }
+.thesis-display .w {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.9s var(--ease-calm), transform 0.9s var(--ease-calm);
+}
+.thesis-display.visible .w { opacity: 1; transform: translateY(0); }
+
+/* ============================================================
+   RESEARCH STATS — calm tile grid
+   ============================================================ */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-5);
+  margin: var(--space-7) auto;
+  max-width: var(--col-media);
+  padding: 0 var(--space-4);
+}
+@media (min-width: 768px) { .stats-grid { padding: 0 var(--space-6); } }
+@media (max-width: 640px) { .stats-grid { grid-template-columns: 1fr; } }
+.stat-tile {
+  padding: var(--space-5) var(--space-5);
+  background: var(--bg-subtle);
+  border-radius: 10px;
+}
+.stat-tile .num {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: clamp(46px, 5vw + 8px, 64px);
+  line-height: 1.0;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  font-variation-settings: 'opsz' 120;
+  margin-bottom: var(--space-4);
+}
+.stat-tile .num .qmark {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 0.7em;
+}
+.stat-tile .label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+.stat-tile .label .src {
+  display: block;
+  margin-top: 4px;
+  color: var(--accent);
+  font-size: 10px;
+}
+
+.research-finding {
+  margin: var(--space-6) auto;
+  max-width: var(--col-text);
+  padding: var(--space-5) var(--space-5);
+  border-left: 2px solid var(--accent);
+  background: transparent;
+}
+.research-finding .text {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--text);
+  margin-bottom: var(--space-2);
+}
+.research-finding .src {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ============================================================
+   FIVE DESIGN DECISIONS — alternating screen + description
+   ============================================================ */
+.decisions {
+  margin: var(--space-7) auto;
+  max-width: var(--col-wide);
+  padding: 0 var(--space-4);
+}
+@media (min-width: 768px) { .decisions { padding: 0 var(--space-6); } }
+.decision {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: var(--space-7);
+  align-items: center;
+  margin-bottom: var(--space-9);
+}
+.decision:last-child { margin-bottom: 0; }
+.decision.flip { grid-template-columns: 1fr 280px; }
+.decision.flip .decision-body { order: -1; }
+.decision-img img {
+  width: 100%; height: auto;
+  border-radius: 18px;
+  box-shadow: 0 24px 48px -28px rgba(26,24,20,0.22);
+}
+.decision-body .number {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 14px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: var(--space-3);
+  font-variation-settings: 'opsz' 24;
+}
+.decision-body h3 {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(22px, 1.5vw + 12px, 28px);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  margin-bottom: var(--space-3);
+  font-variation-settings: 'opsz' 36;
+}
+.decision-body h3 .em {
+  font-weight: 400;
+  font-style: italic;
+}
+.decision-body p {
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--text-muted);
+  margin-bottom: var(--space-3);
+}
+.decision-body p:last-child { margin-bottom: 0; }
+@media (max-width: 720px) {
+  .decision, .decision.flip { grid-template-columns: 1fr; gap: var(--space-5); }
+  .decision.flip .decision-body { order: 0; }
+  .decision-img { max-width: 280px; margin: 0 auto; }
+}
+
+/* ============================================================
+   PROTOTYPE — GIF + breathing CTA
+   ============================================================ */
+.prototype {
+  margin: var(--space-7) auto;
+  max-width: var(--col-media);
+  padding: 0 var(--space-4);
+  text-align: center;
+}
+.prototype .gif {
+  max-width: 320px;
+  margin: 0 auto;
+}
+.prototype .gif img,
+.prototype .gif video {
+  width: 100%; height: auto;
+  display: block;
+  border-radius: 18px;
+  box-shadow: 0 30px 60px -30px rgba(26,24,20,0.22);
+}
+.prototype-note {
+  margin-top: var(--space-6);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--text-muted);
+  font-variation-settings: 'opsz' 18;
+}
+
+.cta-button {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 16px 30px;
+  background: var(--accent);
+  color: var(--bg);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  border-radius: 6px;
+  margin-top: var(--space-6);
+  animation: breath var(--breath) ease-in-out infinite;
+  transition: background 0.8s var(--ease-calm), gap 0.8s var(--ease-calm);
+}
+.cta-button::after {
+  content: '→';
+  transition: transform 0.8s var(--ease-calm);
+}
+.cta-button:hover {
+  background: var(--accent-dark);
+  gap: 14px;
+  animation-play-state: paused;
+}
+.cta-button:hover::after { transform: translateX(3px); }
+
+/* ============================================================
+   USABILITY — before/after side by side
+   ============================================================ */
+.before-after {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+  margin: var(--space-7) auto;
+  max-width: var(--col-media);
+  padding: 0 var(--space-4);
+  align-items: end;
+}
+@media (max-width: 640px) {
+  .before-after { grid-template-columns: 1fr; gap: var(--space-5); }
+}
+.before-after .item img {
+  width: 100%; max-width: 280px;
+  height: auto;
+  margin: 0 auto var(--space-3) auto;
+  border-radius: 18px;
+  box-shadow: 0 24px 48px -28px rgba(26,24,20,0.22);
+  display: block;
+}
+.before-after .item .tag {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.usability-caption {
+  margin-top: var(--space-5);
+  text-align: center;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.findings-list {
+  list-style: none; padding: 0;
+  margin: var(--space-7) 0;
+  display: grid; gap: var(--space-5);
+}
+.findings-list li h4 {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 19px;
+  color: var(--text);
+  margin-bottom: var(--space-2);
+}
+.findings-list li p {
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--text-muted);
+  margin: 0;
+}
+.findings-list li p strong {
+  color: var(--text);
+}
+
+/* ============================================================
+   CLOSING DISPLAY + CTA
+   ============================================================ */
+.closing {
+  padding: var(--space-8) 0;
+  text-align: center;
+}
+.closing .line {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(34px, 4vw + 14px, 60px);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  font-variation-settings: 'opsz' 96;
+  color: var(--text);
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.footer {
+  background: var(--bg-subtle);
+  padding: var(--space-6) 0;
+  font-size: 14px;
+}
+.footer-inner {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+  display: flex; flex-direction: column;
+  gap: var(--space-3);
+  justify-content: space-between;
+}
+@media (min-width: 768px) {
+  .footer-inner { padding: 0 var(--space-6); flex-direction: row; align-items: center; }
+}
+.footer-left .name { font-weight: 500; margin-bottom: 2px; }
+.footer-left .copyright { color: var(--text-muted); font-size: 13px; }
+.footer-right { display: flex; gap: var(--space-5); flex-wrap: wrap; }
+.footer-right a {
+  color: var(--text); position: relative; padding: 2px 0;
+  transition: color 0.8s var(--ease-calm);
+}
+.footer-right a::after {
+  content: ''; position: absolute; inset: auto 0 0 0;
+  height: 1px; background: currentColor;
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 1.2s var(--ease-calm);
+}
+.footer-right a:hover { color: var(--accent); }
+.footer-right a:hover::after { transform: scaleX(1); }
+
+/* ============================================================
+   SCROLL REVEAL — slower than other case studies (calm-pace)
+   ============================================================ */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 1.3s var(--ease-calm), transform 1.3s var(--ease-calm);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   FOCUS + REDUCED MOTION
+   ============================================================ */
+*:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal, .thesis-display, .thesis-display .w, .trip-tracker { opacity: 1 !important; transform: none !important; }
+  .cta-button { animation: none; }
+  .back-link { animation: none; opacity: 1 !important; }
+}
+
+@media (max-width: 480px) {
+  body { font-size: 16px; }
+  .nav-logo { font-size: 20px; }
+  .nav-links a { font-size: 14px; }
+  .cta-button { padding: 14px 24px; font-size: 12px; }
+  .footer-right { gap: var(--space-4); }
+}
+
+/* ============================================================
+   REFLECTION — consistent treatment across all case studies
+   ============================================================ */
+.reflection {
+  background: var(--bg-subtle);
+  padding: var(--space-9) 0;
+  margin: var(--space-8) 0 0 0;
+}
+.reflection .prose p {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.8;
+}
+</style>
+</head>
+<body>
+
+<!-- =========================================================
+     NAV
+     ========================================================= -->
+<nav class="nav" aria-label="Primary">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">MM</a>
+    <div class="nav-links">
+      <a href="about.html">About</a>
+      <a href="writing.html">Writing</a>
+    </div>
+  </div>
+</nav>
+
+<!-- =========================================================
+     TRIP TRACKER — ambient chrome (calm move #3)
+     Mirrors Elena's Trip Tracker design decision before
+     the reader encounters it in the case study.
+     ========================================================= -->
+<div class="trip-tracker" aria-hidden="true" id="tripTracker">
+  <span class="stage" data-stage="1">Checked In</span>
+  <span class="sep">·</span>
+  <span class="stage" data-stage="2">In Stay</span>
+  <span class="sep">·</span>
+  <span class="stage" data-stage="3">Checkout</span>
+</div>
+
+<!-- =========================================================
+     PAGE TOP — breathing back link
+     ========================================================= -->
+<div class="page-top">
+  <div class="col-text">
+    <a href="index.html" class="back-link"><span class="arrow">←</span> Back to works</a>
+  </div>
+</div>
+
+<!-- =========================================================
+     HERO
+     ========================================================= -->
+<header class="hero">
+  <div class="col-text">
+    <h1 class="hero-display">
+      Luxury physical experiences sell maximalism. Luxury digital, I learned, does the opposite.
+    </h1>
+  </div>
+</header>
+
+<div class="silence" aria-hidden="true"></div>
+
+<!-- =========================================================
+     THE ARTIFACT
+     ========================================================= -->
+<section>
+  <div class="col-text reveal">
+    <div class="meta-line">
+      ArtCenter MDes · Interaction Design Studio · Fall 2025 · Solo Project
+    </div>
+    <div class="section-label">The Artifact</div>
+    <div class="prose">
+      <p>Six Senses Ninh Van Bay is a luxury wellness resort in Vietnam. The brand's promise is restoration — guests pay premium prices to put their nervous systems back together. Their app should feel like an extension of that promise. It doesn't.</p>
+      <p>The existing guest dashboard is visually polished but structurally cluttered: editorial photography over categories of overlapping services, promotional content above immediate needs, and no acknowledgment that someone might just want to order dinner without ten minutes of decision-making. It looks like a luxury brand. It works like a hotel app.</p>
+      <p>I spent five weeks redesigning it.</p>
+    </div>
+  </div>
+
+  <figure class="artifact-original reveal">
+    <img src="sixsenses-original.png"
+         alt="The original Six Senses guest dashboard — a mobile screen showing twelve service categories with editorial photography, promotional content, and overlapping entry points.">
+    <figcaption class="figcap">The Original Dashboard — Visually Polished, Structurally Cluttered</figcaption>
+  </figure>
+</section>
+
+<!-- =========================================================
+     THE BRIEF I INTERROGATED
+     ========================================================= -->
+<section>
+  <div class="col-text reveal">
+    <div class="section-label">The Brief I Interrogated</div>
+    <div class="prose">
+      <p>The studio brief gave us nine industries to choose from — automotive, healthcare, finance, ed-tech, smart home, environmental, and several others. I picked hospitality. The reason is small but worth naming: it's one of the only categories where design success isn't measured in task completion alone. It's measured in how someone <em>feels</em> after the task is done.</p>
+      <p>The brief framed the design problem as serving "business vs. leisure travelers" — adapting the interface based on traveler context. I narrowed it further. Business travelers want speed; that's a relatively solved design problem. Leisure travelers at a wellness resort want speed <em>and</em> stillness, which sounds like a contradiction until you start designing for it.</p>
+    </div>
+  </div>
+</section>
+
+<div class="silence" aria-hidden="true"></div>
+
+<!-- =========================================================
+     MEET ELENA
+     ========================================================= -->
+<section>
+  <div class="col-text reveal">
+    <div class="section-label">Meet Elena</div>
+    <div class="prose">
+      <p>I built the case study around one specific leisure guest.</p>
+      <p>Elena is a creative director from New York. Thirty-nine. She runs on deadlines for ten months a year and visits Six Senses in the eleventh. She picked Six Senses specifically because the brand's marketing promises mindfulness, sensory immersion, and sustainability — three commitments her own work doesn't leave room for.</p>
+      <p>When Elena opens the existing Six Senses app, she's already in a slightly altered state. The flight has worn her down. The drive from the airport hasn't fully reset her. She wants the digital experience to meet her where she is, not demand more cognitive effort.</p>
+      <p>That's the design brief, restated through her.</p>
+    </div>
+  </div>
+
+  <div class="persona reveal">
+    <blockquote>"Luxury, to me, means never having to wait without losing the stillness I came here for."</blockquote>
+    <div class="attr">Elena's Persona Card</div>
+  </div>
+</section>
+
+<!-- =========================================================
+     THE FRICTION
+     ========================================================= -->
+<section>
+  <div class="col-text reveal">
+    <div class="section-label">The Friction</div>
+    <div class="prose">
+      <p>I ran a heuristic analysis on the existing dashboard and a task analysis on a standard guest flow (order room service from the villa). Findings consolidated into eight pain points, but four of them carry the case:</p>
+    </div>
+
+    <ul class="friction-list">
+      <li>
+        <h4>Competing entry points.</h4>
+        <p>Three different routes to "request a service," none clearly distinguished. A guest has to choose which button to press before they know what they need.</p>
+      </li>
+      <li>
+        <h4>Unclear grouping.</h4>
+        <p>"Dining," "In-Room Ordering," "Request a Service" — overlap conceptually. Where does ordering room service live? It depends on the day.</p>
+      </li>
+      <li>
+        <h4>Cognitive overload.</h4>
+        <p>Twelve simultaneous categories visible on first load. Each with its own editorial image. The eye doesn't know where to land.</p>
+      </li>
+      <li>
+        <h4>Promotions over purpose.</h4>
+        <p>The largest, most visually weighted real estate on the screen is dedicated to seasonal offers and brand storytelling — not to what guests actually need at the moment they open the app.</p>
+      </li>
+    </ul>
+
+    <div class="prose">
+      <p>The pattern across all four: the app was designed to showcase the resort, not to be a digital sanctuary <em>within</em> it. Those are different design problems. The existing dashboard solved the first one beautifully. It didn't solve the second one at all.</p>
+    </div>
+  </div>
+</section>
+
+<div class="silence" aria-hidden="true"></div>
+
+<!-- =========================================================
+     THE THESIS — word-by-word reveal (calm move #4)
+     ========================================================= -->
+<section>
+  <div class="col-text reveal">
+    <div class="section-label" style="text-align: center;">The Thesis</div>
+  </div>
+
+  <div class="thesis-display" id="thesisDisplay">
+    <span class="line line-1"></span>
+    <span class="line line-2"></span>
+  </div>
+
+  <div class="col-text reveal">
+    <div class="prose">
+      <p>This is the rule I tested every design decision against. Six Senses' brand is sensory abundance — wood, water, leaf, light, presence. The dashboard's job isn't to recreate that abundance digitally; the resort itself does that. The dashboard's job is to <em>disappear</em> into it. To give Elena what she needs without becoming another decision she has to make.</p>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     RESEARCH
+     ========================================================= -->
+<section>
+  <div class="col-text reveal">
+    <div class="section-label">Research</div>
+    <div class="prose">
+      <p>Two research tracks, each doing different work.</p>
+      <p><strong>Six Senses-specific research</strong> informed Elena's character. The clientele Six Senses attracts skews toward high-end affluent travelers who expect immediacy, personalization, and autonomy — but who chose this brand specifically because it promised something <em>slower</em> than other luxury hotels. That tension is Elena's whole psychology.</p>
+      <p><strong>Broader luxury hospitality research</strong> informed feature prioritization. Four findings shaped the redesign:</p>
+    </div>
+  </div>
+
+  <div class="stats-grid reveal">
+    <div class="stat-tile">
+      <div class="num">61%</div>
+      <div class="label">Prefer ordering services via app<span class="src">Skift, 2025</span></div>
+    </div>
+    <div class="stat-tile">
+      <div class="num">88%</div>
+      <div class="label">Prefer managing itineraries digitally<span class="src">Hotel Tech Report, 2025</span></div>
+    </div>
+    <div class="stat-tile">
+      <div class="num"><span class="qmark">"</span>Calm efficiency<span class="qmark">"</span></div>
+      <div class="label">What luxury travelers associate with premium service<span class="src">McKinsey, 2025</span></div>
+    </div>
+    <div class="stat-tile">
+      <div class="num" style="font-size: clamp(20px, 1.4vw + 12px, 24px); font-style: italic; font-weight: 400; line-height: 1.35; letter-spacing: -0.01em;">Luxury hotel app satisfaction correlates most strongly with task completion speed.</div>
+      <div class="label">J.D. Power NAGSI Study, 2025</div>
+    </div>
+  </div>
+
+  <div class="col-text reveal">
+    <div class="prose">
+      <p>The third finding is the one that mattered most. <em>"Calm efficiency"</em> — those two words together, naming a thing the industry was already converging toward but rarely designing for explicitly. I built the dashboard around it.</p>
+    </div>
+  </div>
+</section>
+
+<div class="silence" aria-hidden="true"></div>
+
+<!-- =========================================================
+     FIVE DESIGN DECISIONS
+     ========================================================= -->
+<section>
+  <div class="col-text reveal">
+    <div class="section-label">Five Design Decisions</div>
+  </div>
+
+  <div class="decisions">
+
+    <div class="decision reveal">
+      <div class="decision-img">
+        <img src="sixsenses-decision-1-trip.png"
+             alt="Six Senses dashboard showing the Trip Tracker: a three-stage progress bar at the top with Checked In, In Stay, Checkout.">
+      </div>
+      <div class="decision-body">
+        <div class="number">01 — Trip Tracker</div>
+        <h3>Orientation as anchor.</h3>
+        <p>A simple three-stage progress bar at the top: Checked In, In Stay, Checkout. It tells Elena where she is in her own trip without her having to think about it. Removes the small uncertainty that's a tax on rest.</p>
+      </div>
+    </div>
+
+    <div class="decision flip reveal">
+      <div class="decision-img">
+        <img src="sixsenses-decision-2-moment.png"
+             alt="Six Senses dashboard showing The Moment card: tonight's weather, moon phase, tide, sunset and sunrise times.">
+      </div>
+      <div class="decision-body">
+        <div class="number">02 — The Moment</div>
+        <h3>Sensory orientation.</h3>
+        <p>Tonight's weather, moon phase, tide, sunset, sunrise. A small card that grounds Elena in her physical environment — what's happening outside her villa right now. Mindfulness as ambient data.</p>
+      </div>
+    </div>
+
+    <div class="decision reveal">
+      <div class="decision-img">
+        <img src="sixsenses-decision-3-personalization.png"
+             alt="Six Senses dashboard with the brand logo at top-left expanded into profile, itinerary, preferences, and settings.">
+      </div>
+      <div class="decision-body">
+        <div class="number">03 — Centralized Personalization</div>
+        <h3>One touchpoint for everything personal.</h3>
+        <p>Profile, itinerary, preferences, settings — all under the Six Senses logo at the top-left of the dashboard. The brand mark becomes the entry to the personal layer of the experience.</p>
+      </div>
+    </div>
+
+    <div class="decision flip reveal">
+      <div class="decision-img">
+        <img src="sixsenses-decision-4-services.png"
+             alt="Six Senses dashboard with four primary service categories above the fold: Room Service, Spa, Housekeeping, Book an Experience.">
+      </div>
+      <div class="decision-body">
+        <div class="number">04 — Top Four Guest Needs</div>
+        <h3>Above the fold. The rest collapses.</h3>
+        <p>Room Service. Spa. Housekeeping. Book an Experience. Four categories, each with a short descriptor. Everything else collapses into "All Services" or "Live Chat."</p>
+        <p>This is the central editing move — the original dashboard tried to surface twelve categories at once; mine surfaces four and trusts the secondary routes.</p>
+      </div>
+    </div>
+
+    <div class="decision reveal">
+      <div class="decision-img">
+        <img src="sixsenses-decision-5-active.png"
+             alt="Six Senses dashboard with an Active Request card showing order status, ETA, location, assigned staff member, and a contact button.">
+      </div>
+      <div class="decision-body">
+        <div class="number">05 — Active Request Monitoring</div>
+        <h3>Uncertainty is friction. This removes it.</h3>
+        <p>Once Elena orders something — a meal, a spa appointment, a wake-up call — the status lives in a compact card at the top of the dashboard. Tap it for the expanded state: ETA, location, assigned staff member, order details, contact button.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- =========================================================
+     THE PROTOTYPE
+     ========================================================= -->
+<section>
+  <div class="col-text reveal">
+    <div class="section-label">The Prototype</div>
+    <div class="prose">
+      <p>The flow below walks Elena through her dashboard. The Trip Tracker grounds her in her stay. The Moment surfaces tonight's environmental context. The four service blocks reduce her decision fatigue. She taps Room Service, orders beef pho from her villa in Ninh Van Bay, and confirms. From there, the Active Request card tracks the order back to her.</p>
+    </div>
+  </div>
+
+  <div class="prototype reveal">
+    <div class="gif">
+      <video src="sixsenses-prototype.mp4"
+             autoplay loop muted playsinline preload="metadata"
+             aria-label="Animated prototype walkthrough of the redesigned Six Senses dashboard: Trip Tracker, The Moment, the four service cards, room service order flow, and the Active Request card."></video>
+    </div>
+    <div class="prototype-note">Follow the highlighted areas for the guided flow. Best on desktop. ~3 minutes.</div>
+    <a href="https://www.figma.com/proto/kwkADcHaNG6xQkwvQcVx4m/Untitled?node-id=209-9&t=RcvVfjvVsH5L5Dtj-1"
+       class="cta-button" target="_blank" rel="noopener">
+      Try the prototype
+    </a>
+  </div>
+</section>
+
+<!-- =========================================================
+     USABILITY TESTING
+     ========================================================= -->
+<section>
+  <div class="col-text reveal">
+    <div class="section-label">Usability Testing</div>
+    <div class="prose">
+      <p>I tested the pre-final prototype with two participants, both asked to embody Elena for the room service task. <strong>100% completion rate</strong> — both participants completed the task successfully with no assistance. Still, three findings drove next-iteration revisions:</p>
+    </div>
+
+    <ul class="findings-list">
+      <li>
+        <h4>Readability.</h4>
+        <p>Several text elements rendered below 16px at iPhone size, which strained reading even at standard distance. <strong>Addressed in the final prototype:</strong> bumped to 16px minimum, with 17px for body and 18px for primary CTAs.</p>
+      </li>
+      <li>
+        <h4>Allergy concern.</h4>
+        <p>A tester paused at the order detail screen: <em>"What if I'm allergic to ginger or beansprouts?"</em> The original prototype showed dish names without ingredient lists, which works for a guest who knows the cuisine and fails for a guest who doesn't. <strong>Carried forward:</strong> future iterations would add a collapsible ingredient breakdown under each dish — visible on demand, hidden by default.</p>
+      </li>
+      <li>
+        <h4>Utensil count.</h4>
+        <p>A tester asked: <em>"What if Elena is sharing this with someone — where does she add another set of utensils?"</em> I'd designed for the solo guest and missed the shared scenario. <strong>Carried forward:</strong> a utensil count field on the order customization screen.</p>
+      </li>
+    </ul>
+  </div>
+
+  <div class="before-after reveal">
+    <div class="item">
+      <img src="sixsenses-test-before.png"
+           alt="The pre-usability-testing dashboard prototype.">
+      <div class="tag">Before</div>
+    </div>
+    <div class="item">
+      <img src="sixsenses-test-after.png"
+           alt="The post-usability-testing final dashboard with readability fixes and refined color palette.">
+      <div class="tag">After</div>
+    </div>
+  </div>
+  <div class="usability-caption col-text">Before and After Usability Testing — Readability Addressed, Color Palette Refined</div>
+</section>
+
+<div class="silence" aria-hidden="true"></div>
+
+<!-- =========================================================
+     REFLECTION
+     ========================================================= -->
+<section id="reflection" class="reflection">
+  <div class="col-text reveal">
+    <div class="section-label">Reflection</div>
+    <div class="prose">
+      <p>The phrase I keep returning to from this project: <em>removing friction until function feels effortless.</em> That's the design discipline luxury digital actually rewards. Not adding more — subtracting until what remains feels inevitable.</p>
+      <p>One tester said something I'm still thinking about. After completing the room service task, she described the prototype as <em>"an app unlike any I've seen before."</em> I took that as a compliment at first. Then I sat with it.</p>
+      <p>Unfamiliarity isn't always a virtue. The whole reason interfaces have conventions is that conventions reduce cognitive load — exactly the thing the dashboard is supposed to do. If a guest needs to <em>learn</em> a new interaction pattern to use a luxury hotel app, the calm I designed for is undercut by the small effort of figuring out where everything lives.</p>
+      <p>This is why I leaned hard into the Six Senses brand identity throughout the final version — the deep purple, the typographic restraint, the sensory iconography. If the interaction patterns are unfamiliar, the visual identity should at least be a homecoming. A guest who has stayed at Six Senses before should open the dashboard and feel that they already know it, even before they know how it works.</p>
+      <p>The next iteration would push further into familiar UI patterns — keep the silence, lose the unfamiliarity. <em>The calmness I introduced should never compromise the dashboard's clarity.</em></p>
+      <p>This is the bigger thing I'm taking forward from Six Senses, beyond hospitality. Designing for restoration isn't the same as designing for novelty. The calmer the experience, the more it has to feel like something you already know.</p>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     CLOSING DISPLAY + CTA
+     ========================================================= -->
+<section class="closing reveal">
+  <p class="line">Restoration isn't novelty. It's recognition.</p>
+</section>
+
+<!-- =========================================================
+     FOOTER
+     ========================================================= -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-left">
+      <div class="name">Myra Manekia</div>
+      <div class="copyright">© 2026 Myra Manekia</div>
+    </div>
+    <div class="footer-right">
+      <a href="https://www.linkedin.com/in/myra-manekia/" target="_blank" rel="noopener">LinkedIn ↗</a>
+      <a href="mailto:manekiamyra@gmail.com">manekiamyra@gmail.com</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ──────────── Nav scroll shadow
+  const nav = document.querySelector('.nav');
+  const trackerEl = document.getElementById('tripTracker');
+  const updateNav = () => {
+    const scrolled = window.scrollY > 8;
+    nav.classList.toggle('scrolled', scrolled);
+    if (trackerEl) trackerEl.classList.toggle('nav-scrolled', scrolled);
+  };
+  window.addEventListener('scroll', updateNav, { passive: true });
+  updateNav();
+
+  // ──────────── Reveal observer — slower stagger for calm pacing
+  const revealIO = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealIO.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => revealIO.observe(el));
+
+  // ──────────── Word-by-word thesis reveal (calm move #4)
+  // "If it adds a tap and removes a thought, keep it.
+  //  If it adds a thought to save a tap, cut it."
+  const thesisDisplay = document.getElementById('thesisDisplay');
+  if (thesisDisplay) {
+    const line1 = thesisDisplay.querySelector('.line-1');
+    const line2 = thesisDisplay.querySelector('.line-2');
+    const text1 = 'If it adds a tap and removes a thought, keep it.';
+    const text2 = 'If it adds a thought to save a tap, cut it.';
+    const buildWords = (target, text, startDelay) => {
+      const words = text.split(' ');
+      words.forEach((w, i) => {
+        const span = document.createElement('span');
+        span.className = 'w';
+        span.textContent = w;
+        span.style.transitionDelay = `${startDelay + i * 150}ms`;
+        target.appendChild(span);
+        if (i < words.length - 1) {
+          target.appendChild(document.createTextNode(' '));
+        }
+      });
+    };
+    buildWords(line1, text1, 0);
+    const line1WordCount = text1.split(' ').length;
+    buildWords(line2, text2, line1WordCount * 150 + 400);
+
+    const thesisIO = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          thesisDisplay.classList.add('visible');
+          thesisIO.unobserve(thesisDisplay);
+        }
+      });
+    }, { threshold: 0.3 });
+    thesisIO.observe(thesisDisplay);
+  }
+
+  // ──────────── Trip Tracker chrome (calm move #3)
+  // Pops up briefly only at key moments — progressive, no backward re-pops:
+  //   0  Checked In  : ~0.8s after page load (welcome)
+  //   1  In Stay     : when scroll passes 33%
+  //   2  Checkout    : when Reflection section enters viewport
+  // Auto-hides after ~2s of full visibility. Not persistent — would distract from reading.
+  const tracker = document.getElementById('tripTracker');
+  if (tracker) {
+    const stages = tracker.querySelectorAll('.stage');
+    let currentIdx = -1;
+    let hideTimer = null;
+    const advanceTo = (idx) => {
+      if (idx <= currentIdx) return; // only ever moves forward
+      currentIdx = idx;
+      stages.forEach((s, i) => s.classList.toggle('active', i === idx));
+      tracker.classList.add('visible');
+      if (hideTimer) clearTimeout(hideTimer);
+      // ~1.5s fade in + 2s hold, then remove class triggers ~1.5s fade out
+      hideTimer = setTimeout(() => tracker.classList.remove('visible'), 3500);
+    };
+
+    // Stage 0: Checked In — soft welcome on arrival
+    setTimeout(() => advanceTo(0), 800);
+
+    // Stage 1: In Stay — when reader is meaningfully into the case study
+    const onScroll = () => {
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = docHeight > 0 ? window.scrollY / docHeight : 0;
+      if (pct > 0.33) advanceTo(1);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    // Stage 2: Checkout — when Reflection section comes into view
+    const reflectionEl = document.getElementById('reflection');
+    if (reflectionEl) {
+      const reflectionIO = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            advanceTo(2);
+            reflectionIO.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.2 });
+      reflectionIO.observe(reflectionEl);
+    }
+  }
+
+  // ──────────── Easter egg
+  console.log('%cdesigned with breath in mind.', 'font-family: Fraunces, serif; font-style: italic; color: #8B3A2E; font-size: 14px;');
+</script>
+
+</body>
+</html>
