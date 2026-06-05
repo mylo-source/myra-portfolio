@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Red Light, Green Light — Myra Manekia</title>
+<meta name="description" content="A gesture-controlled prototype where Squid Game's red-light mechanic becomes a small experiment in surveillance and the freeze response. ArtCenter MDes · Creative Prototyping I · Fall 2025.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   DESIGN TOKENS — locked to portfolio system
+   ============================================================ */
+:root {
+  --bg:           #FAF7F2;
+  --bg-subtle:    #F2EDE5;
+  --text:         #1A1814;
+  --text-muted:   #6B655C;
+  --accent:       #8B3A2E;
+  --accent-dark:  #6F2D24;
+  --border:       #E5DFD4;
+
+  --font-serif:   'Fraunces', Georgia, serif;
+  --font-sans:    'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --space-1: 4px; --space-2: 8px; --space-3: 16px; --space-4: 24px;
+  --space-5: 32px; --space-6: 48px; --space-7: 64px; --space-8: 96px; --space-9: 128px;
+
+  --col-text:      720px;
+  --col-media:     880px;
+  --col-wide:      1080px;
+  --container-max: 1200px;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ============================================================
+   RESET
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+img, svg, video { display: block; max-width: 100%; }
+
+/* ============================================================
+   COLUMN HELPERS
+   ============================================================ */
+.col-text    { max-width: var(--col-text);  margin: 0 auto; padding: 0 var(--space-4); }
+.col-media   { max-width: var(--col-media); margin: 0 auto; padding: 0 var(--space-4); }
+.col-wide    { max-width: var(--col-wide);  margin: 0 auto; padding: 0 var(--space-4); }
+@media (min-width: 768px) {
+  .col-text, .col-media, .col-wide { padding: 0 var(--space-6); }
+}
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+.nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  background: var(--bg);
+  z-index: 100;
+  padding: var(--space-3) 0;
+  transition: box-shadow 0.4s var(--ease), padding 0.3s var(--ease);
+}
+.nav.scrolled { box-shadow: 0 1px 0 var(--border); padding: var(--space-2) 0; }
+
+.nav-inner {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+@media (min-width: 768px) { .nav-inner { padding: 0 var(--space-6); } }
+
+.nav-logo {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  position: relative;
+  padding: 4px 0;
+  transition: color 0.3s var(--ease);
+}
+.nav-logo::after {
+  content: ''; position: absolute; inset: auto 0 0 0;
+  height: 1px; background: currentColor;
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.45s var(--ease);
+}
+.nav-logo:hover { color: var(--accent); }
+.nav-logo:hover::after { transform: scaleX(1); }
+
+.nav-links { display: flex; gap: var(--space-5); }
+@media (min-width: 768px) { .nav-links { gap: var(--space-6); } }
+.nav-links a {
+  font-size: 15px; position: relative; padding: 4px 0;
+  transition: color 0.3s var(--ease);
+}
+.nav-links a::after {
+  content: ''; position: absolute; inset: auto 0 0 0;
+  height: 1px; background: currentColor;
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.45s var(--ease);
+}
+.nav-links a:hover { color: var(--accent); }
+.nav-links a:hover::after { transform: scaleX(1); }
+
+/* ============================================================
+   PAGE TOP + BACK LINK
+   ============================================================ */
+.page-top {
+  padding-top: clamp(90px, 11vh, 130px);
+  padding-bottom: 0;
+}
+.back-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 13px; color: var(--text-muted); text-decoration: none;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  transition: color 0.3s var(--ease), gap 0.3s var(--ease);
+  opacity: 0; animation: fadeUp 0.9s var(--ease) 0.1s forwards;
+}
+.back-link:hover { color: var(--accent); gap: 12px; }
+.back-link .arrow { display: inline-block; transition: transform 0.3s var(--ease); }
+.back-link:hover .arrow { transform: translateX(-2px); }
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero {
+  padding: var(--space-5) 0 var(--space-7);
+  text-align: center;
+}
+.hero-title {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(44px, 6.5vw, 84px);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  font-variation-settings: 'opsz' 96;
+  color: var(--text);
+}
+.hero-title .line {
+  display: block;
+  opacity: 0;
+  transform: translateY(18px);
+  animation: fadeUp 1.1s var(--ease) forwards;
+}
+.hero-title .line-1 { animation-delay: 0.15s; }
+.hero-title .line-2 { animation-delay: 0.85s; }
+
+.hero-sub {
+  margin-top: var(--space-7);
+  font-size: 16px;
+  color: var(--text-muted);
+  line-height: 1.7;
+  opacity: 0;
+  animation: fadeUp 1s var(--ease) 1.55s forwards;
+}
+.hero-sub p { margin-bottom: var(--space-2); }
+.hero-sub p:last-child { margin-bottom: 0; }
+
+/* Hero shapes finale — three Squid Game shapes appear after the sub-line */
+.hero-shapes {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-top: var(--space-6);
+}
+.hero-shape {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  opacity: 0;
+  transform: scale(0.4);
+  animation: hero-shape-in 0.8s var(--ease) forwards;
+}
+.hero-shape--circle { background: var(--accent); border-radius: 50%; }
+.hero-shape--triangle {
+  background: transparent;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 11px solid var(--accent);
+}
+.hero-shape--square { background: var(--accent); }
+
+.hero-shape:nth-child(1) { animation-delay: 2.8s; }
+.hero-shape:nth-child(2) { animation-delay: 3.0s; }
+.hero-shape:nth-child(3) { animation-delay: 3.2s; }
+
+@keyframes hero-shape-in {
+  to { opacity: 0.55; transform: scale(1); }
+}
+
+/* Hero figure — cover screenshot on bg-subtle band */
+.hero-figure {
+  background: var(--bg-subtle);
+  padding: clamp(var(--space-6), 6vw, var(--space-8)) 0;
+  margin-top: var(--space-7);
+}
+.hero-figure figure { max-width: var(--col-wide); margin: 0 auto; padding: 0 var(--space-4); }
+@media (min-width: 768px) { .hero-figure figure { padding: 0 var(--space-6); } }
+.hero-figure img {
+  width: 100%; height: auto;
+  border-radius: 6px;
+  box-shadow: 0 30px 60px -30px rgba(26,24,20,0.18);
+}
+
+.figcap {
+  display: block;
+  margin-top: var(--space-3);
+  font-size: 13px;
+  color: var(--text-muted);
+  text-align: center;
+  font-variation-settings: 'opsz' 14;
+}
+
+/* ============================================================
+   OPENING — meta + section title + lead
+   ============================================================ */
+.opening { padding: var(--space-9) 0 var(--space-8); }
+.meta-line {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: var(--space-5);
+}
+.section-title {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(32px, 3.5vw + 12px, 50px);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  font-variation-settings: 'opsz' 60;
+  color: var(--text);
+  margin-bottom: var(--space-6);
+}
+.lead p {
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--text-muted);
+  margin-bottom: var(--space-4);
+}
+.lead p:last-child { margin-bottom: 0; }
+
+/* ============================================================
+   GENERIC SECTION + PROSE
+   ============================================================ */
+.section { padding: var(--space-7) 0; }
+.section-label {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: var(--space-4);
+}
+.prose p {
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--text-muted);
+  margin-bottom: var(--space-4);
+}
+.prose p:last-child { margin-bottom: 0; }
+.prose em, .prose i {
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.prose strong, .prose b { color: var(--text); font-weight: 600; }
+
+/* ============================================================
+   SQUID-GAME SHAPE PRIMITIVES
+   Used for section dividers and trio markers
+   ============================================================ */
+.sg-shape {
+  display: inline-block;
+  flex-shrink: 0;
+}
+.sg-shape--circle {
+  background: var(--accent);
+  border-radius: 50%;
+}
+.sg-shape--triangle {
+  background: transparent;
+}
+.sg-shape--square {
+  background: var(--accent);
+}
+
+/* ============================================================
+   SECTION DIVIDER — three Squid Game shapes, fade-in with stagger
+   ============================================================ */
+.section-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-5);
+  padding: var(--space-7) 0;
+}
+.section-divider .sg-shape {
+  width: 8px;
+  height: 8px;
+  background: var(--text-muted);
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+}
+.section-divider .sg-shape--triangle {
+  background: transparent;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 9px solid var(--text-muted);
+}
+.section-divider.visible .sg-shape {
+  opacity: 0.55;
+  transform: scale(1);
+}
+.section-divider.visible .sg-shape:nth-child(1) { transition-delay: 0s; }
+.section-divider.visible .sg-shape:nth-child(2) { transition-delay: 0.15s; }
+.section-divider.visible .sg-shape:nth-child(3) { transition-delay: 0.3s; }
+
+/* ============================================================
+   TRIOS — conversation-style component for "Building With Claude"
+   User (My Prompt + My Call) on the right, Claude on the left.
+   Includes typing-indicator animation and shape-marker reveal.
+   ============================================================ */
+.trios {
+  max-width: 760px;
+  margin: var(--space-7) auto var(--space-5);
+  padding: 0 var(--space-4);
+}
+@media (min-width: 768px) {
+  .trios { padding: 0 var(--space-6); }
+}
+
+.trio {
+  margin-bottom: var(--space-8);
+}
+.trio:last-child { margin-bottom: 0; }
+
+/* Trio header — shape marker + label, centered */
+.trio-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: var(--space-5);
+}
+.trio-header .sg-shape {
+  width: 11px;
+  height: 11px;
+  /* Shape marker reveal animation — scale-up + 360° rotation */
+  transform: scale(0) rotate(-180deg);
+  opacity: 0;
+  transition: transform 0.7s var(--ease), opacity 0.5s var(--ease);
+}
+.trio-header .sg-shape--triangle {
+  width: 0;
+  height: 0;
+  border-left: 6.5px solid transparent;
+  border-right: 6.5px solid transparent;
+  border-bottom: 11px solid var(--accent);
+}
+.trio.visible .trio-header .sg-shape {
+  transform: scale(1) rotate(0deg);
+  opacity: 1;
+}
+
+/* Trio is .reveal but doesn't fade itself —
+   it acts as a trigger for the messages inside */
+.trio.reveal {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+/* Messages — alternating right (Myra) / left (Claude) */
+.msg {
+  max-width: 80%;
+  padding: var(--space-4) var(--space-5);
+  border-radius: 14px;
+  margin-bottom: var(--space-3);
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+}
+.msg:last-child { margin-bottom: 0; }
+
+/* User messages — pinned to the RIGHT */
+.msg--user {
+  margin-left: auto;
+  margin-right: 0;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-bottom-right-radius: 4px;
+}
+
+/* Claude messages — pinned to the LEFT */
+.msg--ai {
+  margin-left: 0;
+  margin-right: auto;
+  background: var(--bg-subtle);
+  border: 1px solid transparent;
+  border-bottom-left-radius: 4px;
+}
+
+/* When the trio scrolls into view, messages reveal with longer staggers
+   to accommodate the Claude typing indicator between user prompt and call */
+.trio.visible .msg { opacity: 1; transform: translateY(0); }
+.trio.visible .msg:nth-child(2) { transition-delay: 0.15s; }  /* user prompt */
+.trio.visible .msg:nth-child(3) { transition-delay: 0.95s; }  /* claude container */
+.trio.visible .msg:nth-child(4) { transition-delay: 2.6s;  }  /* user call */
+
+.msg-label {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: var(--space-2);
+}
+
+.msg-body {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text);
+}
+.msg-prompt {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 16.5px;
+  line-height: 1.6;
+  color: var(--text);
+  font-variation-settings: 'opsz' 24;
+}
+.msg--ai .msg-body { color: var(--text-muted); }
+
+/* ── Typing indicator (Claude messages only) ──
+   The Claude body starts hidden. While we wait, three dots bounce.
+   At ~1.4s after the Claude container appears, dots fade out and body fades in. */
+
+.msg-typing {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  height: 18px;
+  margin-top: 4px;
+  opacity: 0;
+  overflow: hidden;
+  max-height: 18px;
+}
+.msg-typing span {
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  animation: typing-pulse 1.3s ease-in-out infinite;
+}
+.msg-typing span:nth-child(2) { animation-delay: 0.18s; }
+.msg-typing span:nth-child(3) { animation-delay: 0.36s; }
+
+@keyframes typing-pulse {
+  0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-3px); }
+}
+
+/* Claude body is hidden by default, fades in after typing */
+.msg--ai .msg-body {
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.5s var(--ease), max-height 0.5s var(--ease);
+}
+
+/* Typing indicator timeline (relative to .trio.visible):
+   - 1.15s: Claude container is visible (after its 0.95s delay + ~0.2s into transition)
+   - 1.15s → 1.95s: typing dots present and pulsing
+   - 1.95s → 2.15s: typing collapses
+   - 2.0s: msg-body fades in */
+.trio.visible .msg--ai .msg-typing {
+  animation: typing-show-hide 1.0s var(--ease) 1.15s forwards;
+}
+
+@keyframes typing-show-hide {
+  0%   { opacity: 0; max-height: 18px; margin-top: 4px; }
+  18%  { opacity: 1; }
+  72%  { opacity: 1; max-height: 18px; margin-top: 4px; }
+  100% { opacity: 0; max-height: 0; margin-top: 0; }
+}
+
+.trio.visible .msg--ai .msg-body {
+  opacity: 1;
+  max-height: 500px;
+  transition-delay: 2.0s;
+}
+
+/* Mobile — stack full-width, no L/R asymmetry */
+@media (max-width: 600px) {
+  .msg {
+    max-width: 100%;
+  }
+  .msg--user, .msg--ai {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+/* ============================================================
+   VIDEO FIGURE — for the WIN/LOSS prototype demos
+   ============================================================ */
+.video-figure {
+  margin: var(--space-7) auto;
+}
+.video-figure figure {
+  max-width: var(--col-media);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+@media (min-width: 768px) {
+  .video-figure figure { padding: 0 var(--space-6); }
+}
+.video-figure video {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 6px;
+  box-shadow: 0 30px 60px -30px rgba(26,24,20,0.18);
+  background: #000;
+}
+
+/* ============================================================
+   CTA BLOCK
+   ============================================================ */
+.cta-block {
+  text-align: center;
+  padding: var(--space-7) 0 var(--space-5);
+}
+
+/* ============================================================
+   REFLECTION — consistent treatment across case studies
+   ============================================================ */
+.reflection {
+  background: var(--bg-subtle);
+  padding: var(--space-9) 0;
+  margin: var(--space-8) 0 0 0;
+}
+.reflection .prose p {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.8;
+}
+
+/* ============================================================
+   OUTRO
+   ============================================================ */
+.outro {
+  padding: var(--space-7) 0 var(--space-9);
+  text-align: center;
+  background: var(--bg);
+}
+.outro-line {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-style: normal;
+  font-size: clamp(28px, 3vw + 14px, 44px);
+  line-height: 1.25;
+  letter-spacing: -0.018em;
+  font-variation-settings: 'opsz' 64;
+  color: var(--text);
+  max-width: 760px;
+  margin: 0 auto var(--space-7);
+  padding: 0 var(--space-4);
+}
+.cta-button {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 28px;
+  background: var(--accent);
+  color: var(--bg);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border-radius: 6px;
+  transition: background 0.3s var(--ease), transform 0.4s var(--ease), gap 0.3s var(--ease), box-shadow 0.4s var(--ease);
+}
+.cta-button::after {
+  content: '→';
+  transition: transform 0.3s var(--ease);
+}
+.cta-button:hover {
+  background: var(--accent-dark);
+  transform: translateY(-2px);
+  gap: 12px;
+  box-shadow: 0 10px 24px -8px rgba(139,58,46,0.4);
+}
+.cta-button:hover::after { transform: translateX(2px); }
+.cta-button:active { transform: translateY(0); }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.footer {
+  background: var(--bg-subtle);
+  padding: var(--space-6) 0;
+  font-size: 14px;
+}
+.footer-inner {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+  display: flex; flex-direction: column;
+  gap: var(--space-3);
+  justify-content: space-between;
+}
+@media (min-width: 768px) {
+  .footer-inner { padding: 0 var(--space-6); flex-direction: row; align-items: center; }
+}
+.footer-left .name { font-weight: 500; margin-bottom: 2px; }
+.footer-left .copyright { color: var(--text-muted); font-size: 13px; }
+.footer-right { display: flex; gap: var(--space-5); flex-wrap: wrap; }
+.footer-right a {
+  color: var(--text); position: relative; padding: 2px 0;
+  transition: color 0.3s var(--ease);
+}
+.footer-right a::after {
+  content: ''; position: absolute; inset: auto 0 0 0;
+  height: 1px; background: currentColor;
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.45s var(--ease);
+}
+.footer-right a:hover { color: var(--accent); }
+.footer-right a:hover::after { transform: scaleX(1); }
+
+/* ============================================================
+   SCROLL REVEAL
+   ============================================================ */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   FOCUS + REDUCED MOTION
+   ============================================================ */
+*:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal { opacity: 1 !important; transform: none !important; }
+  .hero-title .line, .hero-sub, .back-link { opacity: 1 !important; transform: none !important; }
+  .msg { opacity: 1 !important; transform: none !important; }
+  .section-divider .sg-shape { opacity: 0.55 !important; transform: scale(1) !important; }
+  .hero-shape { opacity: 0.55 !important; transform: scale(1) !important; }
+  .trio-header .sg-shape { opacity: 1 !important; transform: scale(1) rotate(0deg) !important; }
+  /* Skip typing animation: show Claude body immediately, hide typing dots */
+  .msg-typing { display: none !important; }
+  .msg--ai .msg-body { opacity: 1 !important; max-height: none !important; }
+}
+
+/* ============================================================
+   MOBILE FINE-TUNING
+   ============================================================ */
+@media (max-width: 480px) {
+  body { font-size: 16px; }
+  .nav-logo { font-size: 20px; }
+  .nav-links a { font-size: 14px; }
+  .cta-button { padding: 12px 22px; font-size: 12px; }
+  .footer-right { gap: var(--space-4); }
+}
+</style>
+</head>
+<body>
+
+<!-- =========================================================
+     NAV
+     ========================================================= -->
+<nav class="nav" aria-label="Primary">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">MM</a>
+    <div class="nav-links">
+      <a href="about.html">About</a>
+      <a href="writing.html">Writing</a>
+    </div>
+  </div>
+</nav>
+
+<!-- =========================================================
+     PAGE TOP — Back to works link
+     ========================================================= -->
+<div class="page-top">
+  <div class="col-text">
+    <a href="index.html" class="back-link"><span class="arrow">←</span> Back to works</a>
+  </div>
+</div>
+
+<!-- =========================================================
+     HERO
+     ========================================================= -->
+<header class="hero">
+  <div class="col-text">
+    <h1 class="hero-title">
+      <span class="line line-1">Move.</span>
+      <span class="line line-2">Don't move.</span>
+    </h1>
+    <div class="hero-sub">
+      <p>A gesture-controlled game where your body is the input.</p>
+      <p>And your body is also the surveillance.</p>
+    </div>
+    <div class="hero-shapes" aria-hidden="true">
+      <span class="hero-shape hero-shape--circle"></span>
+      <span class="hero-shape hero-shape--triangle"></span>
+      <span class="hero-shape hero-shape--square"></span>
+    </div>
+  </div>
+</header>
+
+<!-- =========================================================
+     HERO FIGURE — Prototype cover screenshot
+     ========================================================= -->
+<div class="hero-figure">
+  <figure>
+    <img src="redlight-cover.png"
+         alt="Red Light, Green Light prototype interface — dark game canvas with a neon pink outline, an empty webcam panel on the left, and a game field with start and finish lines on the right.">
+    <figcaption class="figcap">Red Light, Green Light — Gesture-controlled prototype, ml5.js</figcaption>
+  </figure>
+</div>
+
+<!-- =========================================================
+     OPENING — Meta line + section title + lead
+     ========================================================= -->
+<section class="opening">
+  <div class="col-text">
+    <div class="meta-line">
+      ArtCenter MDes · Creative Prototyping I · Fall 2025 · Solo Project
+    </div>
+
+    <h2 class="section-title">Your body is the interface.</h2>
+
+    <div class="lead">
+      <p>For "Anything is an Interface" at ArtCenter, I built a gesture-controlled game where the player's body becomes the entire input system. No keyboard. No mouse. Just hands, your face, and a webcam.</p>
+      <p>The project translates Squid Game's red-light, green-light challenge into a real-time ml5.js prototype. When the light is green and the doll is turned away, a pinch of thumb and index finger advances the character. When the light turns red and the doll turns to face you, nose-tracking activates — any detectable movement of your nose ends the game.</p>
+      <p>The mechanic sounds simple. The body's response to it is not.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Squid Game shape divider -->
+<div class="section-divider reveal" aria-hidden="true">
+  <span class="sg-shape sg-shape--circle"></span>
+  <span class="sg-shape sg-shape--triangle"></span>
+  <span class="sg-shape sg-shape--square"></span>
+</div>
+
+<!-- =========================================================
+     THE FRAME
+     ========================================================= -->
+<section class="section reveal">
+  <div class="col-text">
+    <div class="section-label">The Frame</div>
+    <div class="prose">
+      <p>The project asks what happens when the interface is your body and the surveillance is real.</p>
+      <p>Squid Game's mechanic — move freely, freeze under threat of detection — translates into a small experiment in response inhibition under digital observation. The game isn't simulating that. It's literally reproducing it. Even players who know nothing is at stake experience the freeze response: the held breath, the involuntary stillness, the brief tension that comes from being watched.</p>
+      <p>The body responds even when nothing is at stake.</p>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     THE CONCEPT
+     ========================================================= -->
+<section class="section reveal">
+  <div class="col-text">
+    <div class="section-label">The Concept</div>
+    <div class="prose">
+      <p>The game has two states.</p>
+      <p><strong>Green Light.</strong> The doll faces away. A pinch gesture — thumb to index finger, tracked through ml5.js HandPose — advances the on-screen character toward the finish line. The longer the pinch holds, the further you go.</p>
+      <p><strong>Red Light.</strong> The doll turns. The nose-tracking model (ml5.js BodyPose) activates. Any detectable movement of the nose ends the game.</p>
+      <p>The state alternates on a timer: three seconds of green, four seconds of red. Reach the finish line during a green phase to win.</p>
+      <p>State is communicated without text — only the doll's behavior, geometric indicator shapes, and a neon outline around the field that shifts with each phase: pink before start, green during movement, red during freeze.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Squid Game shape divider -->
+<div class="section-divider reveal" aria-hidden="true">
+  <span class="sg-shape sg-shape--circle"></span>
+  <span class="sg-shape sg-shape--triangle"></span>
+  <span class="sg-shape sg-shape--square"></span>
+</div>
+
+<!-- =========================================================
+     BUILDING WITH CLAUDE — conversation-flow trios
+     ========================================================= -->
+<section class="section">
+  <div class="col-text reveal">
+    <div class="section-label">Building With Claude</div>
+    <div class="prose">
+      <p>I am not a coder. I built this prototype with Claude Code as the implementation partner — me providing direction, judgment, and design decisions; Claude writing and debugging the p5.js and ml5.js. The arc below is three moments where that division of labor was visible.</p>
+    </div>
+  </div>
+
+  <div class="trios">
+
+    <!-- Move 1: Ideation — Circle -->
+    <article class="trio reveal">
+      <div class="trio-header">
+        <span class="sg-shape sg-shape--circle" aria-hidden="true"></span>
+        <span>Move 1 — Ideation</span>
+      </div>
+      <div class="msg msg--user">
+        <div class="msg-label">My Prompt</div>
+        <p class="msg-body msg-prompt">"Give me ideas on how to meet this brief using Squid Game. I want it to be embodied — the user's body should be the control."</p>
+      </div>
+      <div class="msg msg--ai">
+        <div class="msg-label">Claude</div>
+        <div class="msg-typing" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+        <p class="msg-body">A list of body-part inputs — eye blinking, hand raising, leg movement, posture detection, full-body silhouette.</p>
+      </div>
+      <div class="msg msg--user">
+        <div class="msg-label">My Call</div>
+        <p class="msg-body">Picked hand-raising with ml5.js image classification. Most recognizable to first-time players, simplest to train via Teachable Machine, fit the technical brief.</p>
+      </div>
+    </article>
+
+    <!-- Move 2: The Pivot — Triangle -->
+    <article class="trio reveal">
+      <div class="trio-header">
+        <span class="sg-shape sg-shape--triangle" aria-hidden="true"></span>
+        <span>Move 2 — The Pivot</span>
+      </div>
+      <div class="msg msg--user">
+        <div class="msg-label">My Prompt</div>
+        <p class="msg-body msg-prompt">"The hand-raising approach isn't responsive enough. Detection lags. Players lose because the model takes too long to register the gesture. What are the alternatives?"</p>
+      </div>
+      <div class="msg msg--ai">
+        <div class="msg-label">Claude</div>
+        <div class="msg-typing" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+        <p class="msg-body">Several ml5.js-native pose detection options including HandPose (real-time hand landmark detection) and BodyPose (full-body pose with individual joint positions). Both run continuously rather than depending on trained image classification.</p>
+      </div>
+      <div class="msg msg--user">
+        <div class="msg-label">My Call</div>
+        <p class="msg-body">Redesigned the input entirely. HandPose for the movement gesture — a thumb-and-index pinch, deliberate, hard to do accidentally. BodyPose's nose-tracking for the freeze enforcement — nose movement is nearly impossible to suppress voluntarily, which made the freeze mechanic actually feel like a freeze. This shift made the game feel responsive and embodied for the first time.</p>
+      </div>
+    </article>
+
+    <!-- Move 3: A Design Override — Square -->
+    <article class="trio reveal">
+      <div class="trio-header">
+        <span class="sg-shape sg-shape--square" aria-hidden="true"></span>
+        <span>Move 3 — A Design Override</span>
+      </div>
+      <div class="msg msg--user">
+        <div class="msg-label">My Prompt</div>
+        <p class="msg-body msg-prompt">"Add visual state communication for the green-light vs. red-light phases."</p>
+      </div>
+      <div class="msg msg--ai">
+        <div class="msg-label">Claude</div>
+        <div class="msg-typing" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+        <p class="msg-body">A colored bounding box around the entire field that switched color with each state — green during green light, red during red light.</p>
+      </div>
+      <div class="msg msg--user">
+        <div class="msg-label">My Call</div>
+        <p class="msg-body">Rejected. Asked Claude to replace the box with a glowing neon outline traced around the field's existing border. Pink before start, green during the green phase, red during the red phase. Same state communication, integrated into the geometry instead of layered over it.</p>
+      </div>
+    </article>
+
+  </div>
+
+  <div class="col-text reveal" style="margin-top: var(--space-7);">
+    <div class="prose">
+      <p>A pattern emerged across the work. Claude was reliably useful for code: pose detection logic, state management, debugging detection thresholds. Less so for design. Most of the visual identity of the game came from rejecting Claude's first attempts and rewriting them. The collaboration worked because the division was honest — Claude's hands, my judgment.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Squid Game shape divider -->
+<div class="section-divider reveal" aria-hidden="true">
+  <span class="sg-shape sg-shape--circle"></span>
+  <span class="sg-shape sg-shape--triangle"></span>
+  <span class="sg-shape sg-shape--square"></span>
+</div>
+
+<!-- =========================================================
+     FINAL PROTOTYPE
+     ========================================================= -->
+<section class="section">
+  <div class="col-text reveal">
+    <div class="section-label">Final Prototype</div>
+    <div class="prose">
+      <p>Below: a complete win, then a complete loss. The live prototype is hosted on the p5.js editor and requires webcam access to play.</p>
+    </div>
+  </div>
+
+  <div class="video-figure reveal">
+    <figure>
+      <video autoplay loop muted playsinline preload="metadata"
+             aria-label="Win playthrough: the character advances during green light and reaches the finish line.">
+        <source src="redlight-win.mp4" type="video/mp4">
+      </video>
+      <figcaption class="figcap">Reaching the finish line during a green-light phase.</figcaption>
+    </figure>
+  </div>
+
+  <div class="video-figure reveal">
+    <figure>
+      <video autoplay loop muted playsinline preload="metadata"
+             aria-label="Loss playthrough: nose movement is detected during a red-light phase and the game ends.">
+        <source src="redlight-loss.mp4" type="video/mp4">
+      </video>
+      <figcaption class="figcap">Detected nose movement during a red-light phase — immediate loss.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- =========================================================
+     REFLECTION
+     ========================================================= -->
+<section class="reflection">
+  <div class="col-text reveal">
+    <div class="section-label">Reflection</div>
+    <div class="prose">
+      <p>I came to this project because I loved Squid Game. Not because I had a critique. The mechanic was visually striking, the source material was charged, and the brief — "anything is an interface" — gave me permission to translate one into the other.</p>
+      <p>Building it taught me something the show was already saying. The body responds to surveillance even when the player knows nothing is at stake. The freeze isn't a choice. It's what the body does when it senses observation under threat. Squid Game's politics — forced compliance, the cost of being watched — turn out to be a real physical thing the moment you put the mechanic into a player's actual body.</p>
+      <p>The case for AI-collaborative practice this project makes is the inverse of the one people usually fear. I didn't lose creative agency to Claude. The division of labor made it more visible — Claude's job was implementation, mine was deciding what to make and how it should feel. That distinction kept design judgment human, exactly where it has to live.</p>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     OUTRO
+     ========================================================= -->
+<section class="outro">
+  <p class="outro-line">The body doesn't ask whether it's a game.</p>
+  <a href="https://editor.p5js.org/mmanekia/full/EzN8FYUA3" class="cta-button" target="_blank" rel="noopener">
+    Play the live prototype
+  </a>
+</section>
+
+<!-- =========================================================
+     FOOTER
+     ========================================================= -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-left">
+      <div class="name">Myra Manekia</div>
+      <div class="copyright">© 2026 Myra Manekia</div>
+    </div>
+    <div class="footer-right">
+      <a href="https://www.linkedin.com/in/myra-manekia/" target="_blank" rel="noopener">LinkedIn ↗</a>
+      <a href="mailto:manekiamyra@gmail.com">manekiamyra@gmail.com</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ──────────── Nav: scroll shadow
+  const nav = document.querySelector('.nav');
+  const updateNav = () => nav.classList.toggle('scrolled', window.scrollY > 8);
+  window.addEventListener('scroll', updateNav, { passive: true });
+  updateNav();
+
+  // ──────────── Generic reveal observer (matches justfixit/index pattern)
+  const revealIO = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        entry.target.style.transitionDelay = `${i * 90}ms`;
+        entry.target.classList.add('visible');
+        revealIO.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => revealIO.observe(el));
+</script>
+
+</body>
+</html>
