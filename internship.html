@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Selected Internship Work — Payfast by Network · Myra Manekia</title>
+<meta name="description" content="Two-month Product Design internship at Payfast by Network, a South African fintech. Merchant app store listings (launched October 2024) and Cause Index donation platform redesign.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   DESIGN TOKENS
+   ============================================================ */
+:root {
+  --bg:           #FAF7F2;
+  --bg-subtle:    #F2EDE5;
+  --text:         #1A1814;
+  --text-muted:   #6B655C;
+  --accent:       #8B3A2E;
+  --accent-dark:  #6F2D24;
+  --border:       #E5DFD4;
+
+  --font-serif:   'Fraunces', Georgia, serif;
+  --font-sans:    'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --space-1: 4px; --space-2: 8px; --space-3: 16px; --space-4: 24px;
+  --space-5: 32px; --space-6: 48px; --space-7: 64px; --space-8: 96px; --space-9: 128px;
+
+  --col-text:      720px;
+  --col-media:     880px;
+  --col-wide:      1080px;
+  --container-max: 1200px;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ============================================================
+   RESET
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+img, svg { display: block; max-width: 100%; }
+
+/* ============================================================
+   READING PROGRESS BAR — thin line at top of viewport fills as
+   the reader scrolls. Subtle wayfinding for a long case study.
+   ============================================================ */
+.progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  width: 0%;
+  height: 2px;
+  background: var(--accent);
+  z-index: 200;
+  transition: width 0.1s linear;
+}
+
+/* ============================================================
+   COLUMN HELPERS
+   ============================================================ */
+.col-text  { max-width: var(--col-text);  margin: 0 auto; padding: 0 var(--space-4); }
+.col-media { max-width: var(--col-media); margin: 0 auto; padding: 0 var(--space-4); }
+.col-wide  { max-width: var(--col-wide);  margin: 0 auto; padding: 0 var(--space-4); }
+@media (min-width: 768px) {
+  .col-text, .col-media, .col-wide { padding: 0 var(--space-6); }
+}
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+.nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  background: var(--bg);
+  z-index: 100;
+  padding: var(--space-3) 0;
+  transition: box-shadow 0.4s var(--ease), padding 0.3s var(--ease);
+}
+.nav.scrolled { box-shadow: 0 1px 0 var(--border); padding: var(--space-2) 0; }
+
+.nav-inner {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+@media (min-width: 768px) { .nav-inner { padding: 0 var(--space-6); } }
+
+.nav-logo {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  position: relative;
+  padding: 4px 0;
+  transition: color 0.3s var(--ease);
+}
+.nav-logo:hover { color: var(--accent); }
+
+.nav-links { display: flex; gap: var(--space-5); }
+@media (min-width: 768px) { .nav-links { gap: var(--space-6); } }
+.nav-links a {
+  font-size: 15px;
+  position: relative;
+  padding: 4px 0;
+  transition: color 0.3s var(--ease);
+}
+.nav-links a:hover { color: var(--accent); }
+
+/* ============================================================
+   PAGE TOP / BACK LINK
+   ============================================================ */
+.page-top {
+  padding-top: 110px;
+  padding-bottom: var(--space-5);
+}
+.back-link {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  transition: color 0.3s var(--ease);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.back-link::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-left: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform 0.3s var(--ease);
+}
+.back-link:hover { color: var(--accent); }
+.back-link:hover::before { transform: rotate(45deg) translate(-2px, 2px); }
+
+/* Counter — for the 80,000+ stat that animates up on scroll-in */
+.counter {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-style: italic;
+  color: var(--accent);
+  font-variation-settings: 'opsz' 14;
+  display: inline-block;
+  min-width: 0;
+}
+
+/* Pull quote — for the strongest meditation lines.
+   Larger italic serif inside a tinted box with terracotta accent. */
+.pull-quote {
+  max-width: 800px;
+  margin: var(--space-7) auto;
+  padding: var(--space-6) clamp(var(--space-5), 4vw, var(--space-7));
+  background: var(--bg-subtle);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 8px 8px 0;
+  position: relative;
+}
+.pull-quote::before {
+  content: '';
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-5);
+  width: 14px;
+  height: 14px;
+  border-top: 1.8px solid var(--accent);
+  border-right: 1.8px solid var(--accent);
+  transform: rotate(45deg);
+  opacity: 0.4;
+}
+.pull-quote p {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(20px, 1.6vw + 10px, 26px);
+  line-height: 1.5;
+  color: var(--text);
+  font-variation-settings: 'opsz' 32;
+}
+
+/* ============================================================
+   CHEVRON — Payfast's brand mark, used here as the page's
+   visual through-line. CSS-drawn for crisp rendering at any
+   size, on theme with the design work in the case study.
+   ============================================================ */
+.chev {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-top: 1.8px solid var(--accent);
+  border-right: 1.8px solid var(--accent);
+  transform: rotate(45deg);
+  vertical-align: middle;
+}
+.chev--lg {
+  width: 14px;
+  height: 14px;
+  border-top-width: 2.2px;
+  border-right-width: 2.2px;
+}
+.chev--muted {
+  border-color: var(--text-muted);
+  opacity: 0.55;
+}
+
+/* Chevron trios — used in hero finale + section dividers */
+.chev-trio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+}
+.chev-trio .chev {
+  opacity: 0;
+  transform: rotate(45deg) translateX(-6px);
+  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+}
+.chev-trio.visible .chev {
+  opacity: 0.55;
+  transform: rotate(45deg) translateX(0);
+}
+.chev-trio.visible .chev:nth-child(1) { transition-delay: 0s; }
+.chev-trio.visible .chev:nth-child(2) { transition-delay: 0.15s; }
+.chev-trio.visible .chev:nth-child(3) { transition-delay: 0.3s; }
+
+/* Hover micro-interaction on chevron dividers */
+.chev-divider {
+  padding: var(--space-7) 0;
+}
+.chev-divider .chev {
+  transition: opacity 0.7s var(--ease), transform 0.5s var(--ease);
+}
+.chev-divider:hover .chev {
+  opacity: 0.85;
+  transform: rotate(45deg) translateX(2px);
+}
+.chev-divider:hover .chev:nth-child(2) { transition-delay: 0.05s; }
+.chev-divider:hover .chev:nth-child(3) { transition-delay: 0.1s; }
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero {
+  padding: var(--space-5) 0 var(--space-7);
+}
+.hero-label {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: var(--space-4);
+  opacity: 0;
+  animation: fadeUp 0.9s var(--ease) 0.2s forwards;
+}
+.hero-title {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(40px, 5vw + 16px, 76px);
+  line-height: 1.05;
+  letter-spacing: -0.022em;
+  color: var(--text);
+  margin-bottom: var(--space-5);
+  font-variation-settings: 'opsz' 100;
+  opacity: 0;
+  animation: fadeUp 1s var(--ease) 0.45s forwards;
+}
+.hero-intro {
+  font-size: 18px;
+  line-height: 1.7;
+  color: var(--text-muted);
+  max-width: 640px;
+  opacity: 0;
+  animation: fadeUp 1s var(--ease) 0.8s forwards;
+}
+.hero-chev-trio {
+  margin-top: var(--space-6);
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   PROJECT SECTIONS
+   ============================================================ */
+.project {
+  padding: var(--space-8) 0 var(--space-7);
+}
+.project-header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-4);
+  margin-bottom: var(--space-7);
+}
+.project-number {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: clamp(48px, 5vw + 14px, 72px);
+  line-height: 1;
+  color: var(--accent);
+  opacity: 0.7;
+  letter-spacing: -0.02em;
+  font-variation-settings: 'opsz' 100;
+}
+.project-title {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(28px, 2vw + 14px, 40px);
+  line-height: 1.15;
+  letter-spacing: -0.018em;
+  color: var(--text);
+  font-variation-settings: 'opsz' 60;
+}
+
+/* ============================================================
+   PROSE BLOCKS
+   ============================================================ */
+.prose-block {
+  max-width: var(--col-text);
+  margin: 0 auto var(--space-6);
+  padding: 0 var(--space-4);
+}
+@media (min-width: 768px) {
+  .prose-block { padding: 0 var(--space-6); }
+}
+.prose-block p {
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--text);
+  margin-bottom: var(--space-3);
+}
+.prose-block p:last-child { margin-bottom: 0; }
+.prose-block p strong {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.block-heading {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: var(--space-4);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.block-heading::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-top: 1.6px solid currentColor;
+  border-right: 1.6px solid currentColor;
+  transform: rotate(45deg);
+  position: relative;
+  top: -1px;
+}
+
+/* Meditative single-sentence lines — italic serif, slightly larger */
+.prose-meditation {
+  font-family: var(--font-serif) !important;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 20px !important;
+  line-height: 1.55 !important;
+  color: var(--text) !important;
+  font-variation-settings: 'opsz' 28;
+  margin: var(--space-5) 0 !important;
+}
+.prose-meditation.big {
+  font-size: 24px !important;
+  color: var(--accent) !important;
+}
+
+/* ============================================================
+   IMAGE BLOCKS — with subtle hover scale
+   ============================================================ */
+.img-block {
+  max-width: var(--col-media);
+  margin: var(--space-6) auto;
+  padding: 0 var(--space-4);
+}
+@media (min-width: 768px) {
+  .img-block { padding: 0 var(--space-6); }
+}
+.img-block img {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  background: var(--bg-subtle);
+  transition: transform 0.6s var(--ease), box-shadow 0.6s var(--ease);
+}
+.img-block:hover img {
+  transform: scale(1.008);
+  box-shadow: 0 6px 24px rgba(26, 24, 20, 0.06);
+}
+.img-block figcaption {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-style: italic;
+  color: var(--text-muted);
+  margin-top: var(--space-3);
+  text-align: center;
+}
+
+/* Image pair — two images side by side */
+.img-pair {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  max-width: var(--col-media);
+  margin: var(--space-6) auto;
+  padding: 0 var(--space-4);
+}
+@media (min-width: 700px) {
+  .img-pair { grid-template-columns: 1fr 1fr; gap: var(--space-5); padding: 0 var(--space-6); }
+}
+.img-pair figure { margin: 0; }
+.img-pair img {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  background: var(--bg-subtle);
+  transition: transform 0.6s var(--ease), box-shadow 0.6s var(--ease);
+}
+.img-pair figure:hover img {
+  transform: scale(1.01);
+  box-shadow: 0 6px 24px rgba(26, 24, 20, 0.06);
+}
+.img-pair figcaption {
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  font-style: italic;
+  color: var(--text-muted);
+  margin-top: var(--space-2);
+  text-align: center;
+}
+
+/* Final designs grid — six destination pages in 3×2 below the Home hero */
+.final-hero {
+  margin-bottom: var(--space-5);
+}
+.final-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+  max-width: var(--col-wide);
+  margin: var(--space-5) auto var(--space-6);
+  padding: 0 var(--space-4);
+}
+@media (min-width: 700px) {
+  .final-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--space-5);
+    padding: 0 var(--space-6);
+  }
+}
+.final-grid figure { margin: 0; }
+.final-grid img {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  background: var(--bg-subtle);
+  transition: transform 0.6s var(--ease), box-shadow 0.6s var(--ease);
+}
+.final-grid figure:hover img {
+  transform: scale(1.01);
+  box-shadow: 0 6px 24px rgba(26, 24, 20, 0.06);
+}
+.final-grid figcaption {
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  font-style: italic;
+  color: var(--text-muted);
+  margin-top: var(--space-2);
+  text-align: center;
+}
+
+/* ============================================================
+   THREE-COLUMN BLOCK (retain / innovate / adapt)
+   Each column animates in sequence.
+   ============================================================ */
+.three-col {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+  max-width: var(--col-wide);
+  margin: var(--space-6) auto var(--space-7);
+  padding: 0 var(--space-4);
+}
+@media (min-width: 700px) {
+  .three-col {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--space-6);
+    padding: 0 var(--space-6);
+  }
+}
+.three-col .col {
+  padding: var(--space-5);
+  background: var(--bg-subtle);
+  border-radius: 8px;
+  border-left: 2px solid transparent;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease), border-color 0.4s var(--ease);
+}
+.three-col.visible .col {
+  opacity: 1;
+  transform: translateY(0);
+}
+.three-col.visible .col:nth-child(1) { transition-delay: 0.05s; }
+.three-col.visible .col:nth-child(2) { transition-delay: 0.25s; }
+.three-col.visible .col:nth-child(3) { transition-delay: 0.45s; }
+.three-col .col:hover { border-left-color: var(--accent); }
+
+.col-label {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: var(--space-3);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.col-label::before {
+  content: '';
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-top: 1.5px solid currentColor;
+  border-right: 1.5px solid currentColor;
+  transform: rotate(45deg);
+}
+.three-col .col p {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text);
+}
+
+/* ============================================================
+   FEATURE PAIR — for the "Two features from my own design thinking"
+   ============================================================ */
+.feature-pair {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+  max-width: var(--col-wide);
+  margin: var(--space-5) auto var(--space-7);
+  padding: 0 var(--space-4);
+}
+@media (min-width: 768px) {
+  .feature-pair {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-6);
+    padding: 0 var(--space-6);
+  }
+}
+.feature {
+  position: relative;
+  padding-left: var(--space-6);
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+}
+.feature.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.feature-number {
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-style: italic;
+  font-size: 26px;
+  line-height: 1;
+  color: var(--accent);
+  opacity: 0.85;
+  letter-spacing: -0.02em;
+}
+.feature-title {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: 22px;
+  line-height: 1.25;
+  color: var(--text);
+  margin-bottom: var(--space-3);
+  font-variation-settings: 'opsz' 30;
+}
+.feature p {
+  font-size: 15.5px;
+  line-height: 1.7;
+  color: var(--text);
+  margin-bottom: var(--space-3);
+}
+.feature-meditation {
+  font-family: var(--font-serif) !important;
+  font-style: italic;
+  font-size: 16px !important;
+  color: var(--text-muted) !important;
+  border-left: 2px solid var(--accent);
+  padding-left: var(--space-3);
+  margin-top: var(--space-4) !important;
+  margin-bottom: 0 !important;
+}
+
+/* ============================================================
+   CLOSING REFLECTION — the most important paragraph
+   ============================================================ */
+.closing-reflection {
+  max-width: var(--col-text);
+  margin: var(--space-7) auto var(--space-6);
+  padding: var(--space-7) var(--space-5);
+  text-align: center;
+  position: relative;
+}
+.closing-reflection::before,
+.closing-reflection::after {
+  content: '';
+  display: block;
+  margin: 0 auto;
+  width: 40px;
+  height: 1px;
+  background: var(--accent);
+  opacity: 0.4;
+}
+.closing-reflection::before { margin-bottom: var(--space-6); }
+.closing-reflection::after  { margin-top: var(--space-6); }
+.closing-reflection p {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(20px, 1.5vw + 10px, 26px);
+  line-height: 1.55;
+  color: var(--text);
+  font-variation-settings: 'opsz' 30;
+}
+
+/* ============================================================
+   STATUS BLOCK — italic with terracotta left border
+   ============================================================ */
+.status-block {
+  max-width: var(--col-text);
+  margin: var(--space-6) auto var(--space-7);
+  padding: 0 var(--space-4);
+}
+@media (min-width: 768px) {
+  .status-block { padding: 0 var(--space-6); }
+}
+.status-inner {
+  border-left: 2px solid var(--accent);
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-subtle);
+  border-radius: 0 4px 4px 0;
+}
+.status-label {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: var(--space-2);
+}
+.status-text {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+/* ============================================================
+   REVEAL ON SCROLL
+   ============================================================ */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.footer {
+  margin-top: var(--space-8);
+  background: var(--bg-subtle);
+  padding: var(--space-6) 0;
+  font-size: 14px;
+}
+.footer-inner {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+@media (min-width: 768px) { .footer-inner { padding: 0 var(--space-6); } }
+.footer .name { font-family: var(--font-serif); font-weight: 500; font-size: 15px; }
+.footer .copyright { color: var(--text-muted); font-size: 13px; margin-top: 2px; }
+.footer-right { display: flex; gap: var(--space-5); }
+.footer-right a {
+  color: var(--text-muted);
+  transition: color 0.3s var(--ease);
+}
+.footer-right a:hover { color: var(--accent); }
+
+@media (max-width: 600px) {
+  .footer-inner { flex-direction: column; gap: var(--space-4); align-items: flex-start; }
+}
+
+/* ============================================================
+   FOCUS + REDUCED MOTION
+   ============================================================ */
+*:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal { opacity: 1 !important; transform: none !important; }
+  .hero-label, .hero-title, .hero-intro { opacity: 1 !important; transform: none !important; }
+  .three-col .col, .feature { opacity: 1 !important; transform: none !important; }
+  .chev-trio .chev { opacity: 0.55 !important; transform: rotate(45deg) !important; }
+  .progress-bar { display: none !important; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- Reading progress bar -->
+<div class="progress-bar" id="progress"></div>
+
+<!-- Navigation -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">MM</a>
+    <div class="nav-links">
+      <a href="about.html">About</a>
+      <a href="writing.html">Writing</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+
+  <!-- =========================================================
+       PAGE TOP / BACK LINK
+       ========================================================= -->
+  <div class="col-wide page-top">
+    <a href="index.html" class="back-link">Back to works</a>
+  </div>
+
+  <!-- =========================================================
+       HERO
+       ========================================================= -->
+  <header class="hero">
+    <div class="col-text">
+      <div class="hero-label">Selected Internship Work · 2024</div>
+      <h1 class="hero-title">Payfast by Network</h1>
+      <p class="hero-intro">
+        Two-month Product Design internship at a South African fintech — the country's second-largest online payments platform, serving <span class="counter" data-target="80000">0</span>+ merchant businesses. Two projects across product UI and service design; each selected by the team as the final design. What ultimately shipped to production varied — noted with each.
+      </p>
+      <div class="chev-trio hero-chev-trio" aria-hidden="true">
+        <span class="chev chev--lg"></span>
+        <span class="chev chev--lg"></span>
+        <span class="chev chev--lg"></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- =========================================================
+       PROJECT 01 — MERCHANT APP STORE LISTINGS
+       ========================================================= -->
+  <section class="project" id="project-1">
+    <div class="col-wide">
+      <div class="project-header reveal">
+        <div class="project-number">01</div>
+        <h2 class="project-title">Merchant App Store Listings</h2>
+      </div>
+    </div>
+
+    <!-- Intro -->
+    <div class="prose-block reveal">
+      <p>The merchant app was being rebranded alongside Payfast's identity rollout. The team needed updated app store listings — the screens and banner that appear on Google Play and the App Store — to carry the new brand into the surface where merchants first encounter the app.</p>
+      <p class="prose-meditation"><em>I started by deciding what counted as the brief.</em></p>
+    </div>
+
+    <!-- The brief -->
+    <div class="prose-block reveal">
+      <h3 class="block-heading">The brief</h3>
+      <p>Two deliverables: a four-screen carousel of the rebranded app in device mockups, and a banner image. Both had to align with the new identity while staying recognizable to existing merchants. The pre-rebrand listing materials were available as a baseline.</p>
+    </div>
+
+    <!-- Image: pre-rebrand listings -->
+    <figure class="img-block reveal">
+      <img src="payfast-prerebrand.png" alt="Pre-rebrand Payfast merchant app store listings — the baseline I worked from">
+      <figcaption>Pre-rebrand listings — the baseline.</figcaption>
+    </figure>
+
+    <!-- Looking outside the brief -->
+    <div class="prose-block reveal">
+      <h3 class="block-heading">Looking outside the brief</h3>
+      <p>I started by studying listings that weren't ours. Spotify and Netflix for treatments that worked at scale. Yoco — Payfast's main competitor in South African payments — for what conventions our category followed.</p>
+    </div>
+
+    <!-- Image pair: Spotify + Yoco competitive analysis -->
+    <div class="img-pair reveal">
+      <figure>
+        <img src="payfast-spotify.png" alt="Spotify's app store listing showing a continuous background flowing across all four screens of the carousel">
+        <figcaption>Spotify — continuous background across screens.</figcaption>
+      </figure>
+      <figure>
+        <img src="payfast-yoco.png" alt="Yoco's app store listing showing category-conventional gradient backgrounds and payment-focused screen selection">
+        <figcaption>Yoco — Payfast's main South African competitor.</figcaption>
+      </figure>
+    </div>
+
+    <div class="prose-block reveal">
+      <p>Spotify did something I hadn't seen in fintech: a single visual ran behind all four screens of the carousel — threading them into one sequence instead of four disconnected moments. <em>Could that move travel?</em></p>
+      <p>Yoco was the opposite logic. Clean mockups, gradient backgrounds, payment-focused screen selection. Anchored in category vocabulary. Different approach, both correct.</p>
+    </div>
+
+    <!-- Retain, innovate, adapt -->
+    <div class="prose-block reveal">
+      <h3 class="block-heading">Retain, innovate, adapt</h3>
+      <p>The scan resolved into three columns, not two.</p>
+    </div>
+
+    <div class="three-col reveal">
+      <div class="col">
+        <div class="col-label">Retain</div>
+        <p>From the pre-rebrand: centered phone mockups, screen-bottom captions, four-screen carousel structure. Familiar to existing merchants.</p>
+      </div>
+      <div class="col">
+        <div class="col-label">Innovate</div>
+        <p>From Spotify: the continuous background threading across screens. Fragmentation turned into sequence.</p>
+      </div>
+      <div class="col">
+        <div class="col-label">Adapt</div>
+        <p>From Yoco: gradient backgrounds replacing the pre-rebrand's solid colors. Category convention with the new palette.</p>
+      </div>
+    </div>
+
+    <!-- The central decision -->
+    <div class="prose-block reveal">
+      <h3 class="block-heading">The central decision</h3>
+      <p>The continuous background needed material. I used Payfast's chevron — already part of the new brand system — as the repeating element, oriented and gradient-shifted across screens so the pattern flowed without dominating individual frames.</p>
+    </div>
+
+    <!-- Pull quote — the central design philosophy of the project -->
+    <aside class="pull-quote reveal">
+      <p>Innovation drawn from the brand's own vocabulary rather than introduced alongside it.</p>
+    </aside>
+
+    <!-- Image: wireframes -->
+    <figure class="img-block reveal">
+      <img src="payfast-wireframes.png" alt="Wireframes exploring how the chevron pattern flows across the four-screen carousel">
+      <figcaption>Wireframes — the chevron flow.</figcaption>
+    </figure>
+
+    <div class="prose-block reveal">
+      <p>This is the decision I'd point to first. Not the most ambitious move — but the one that made the rest of the project feel coherent.</p>
+    </div>
+
+    <!-- Final designs -->
+    <div class="prose-block reveal">
+      <h3 class="block-heading">Final designs</h3>
+    </div>
+
+    <figure class="img-block reveal">
+      <img src="payfast-listings.png" alt="The four final merchant app listing screens with chevron continuous background and banner: dashboard, transaction history, pay by link, refund">
+      <figcaption>Final listings — dashboard, transaction history, pay by link, refund, plus banner.</figcaption>
+    </figure>
+
+    <!-- Status -->
+    <div class="status-block reveal">
+      <div class="status-inner">
+        <div class="status-label">Status</div>
+        <p class="status-text">Selected as the final designs. Launched alongside the rebranded merchant app in October 2024.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Chevron section divider -->
+  <div class="col-text">
+    <div class="chev-trio chev-divider reveal" aria-hidden="true">
+      <span class="chev chev--muted"></span>
+      <span class="chev chev--muted"></span>
+      <span class="chev chev--muted"></span>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       PROJECT 02 — CAUSE INDEX PLATFORM REDESIGN
+       ========================================================= -->
+  <section class="project" id="project-2">
+    <div class="col-wide">
+      <div class="project-header reveal">
+        <div class="project-number">02</div>
+        <h2 class="project-title">Cause Index Platform Redesign</h2>
+      </div>
+    </div>
+
+    <!-- Intro -->
+    <div class="prose-block reveal">
+      <p>The Cause Index is Payfast's donation platform — the tool merchants use to give to South African nonprofits. The rebrand required a full visual update.</p>
+      <p class="prose-meditation"><em>The interesting question was underneath.</em></p>
+      <p class="prose-meditation big"><em>How do you redesign a donation page in a way that actually changes the likelihood someone donates?</em></p>
+    </div>
+
+    <!-- The brief -->
+    <div class="prose-block reveal">
+      <h3 class="block-heading">The brief</h3>
+      <p>Three goals from the team: align the platform with the new brand identity, streamline navigation, and incorporate design elements that would encourage merchant donations rather than just display them.</p>
+    </div>
+
+    <!-- Image: original Cause Index -->
+    <figure class="img-block reveal">
+      <img src="payfast-ci-original.png" alt="The original Cause Index donation platform before the rebrand — the baseline I worked from">
+      <figcaption>Original Cause Index — the baseline.</figcaption>
+    </figure>
+
+    <!-- The reframe that mattered -->
+    <div class="prose-block reveal">
+      <h3 class="block-heading">The reframe that mattered</h3>
+      <p>The third goal was where the project opened up. <em>Shift the platform's goal from providing a space for donations to actively encouraging them.</em></p>
+      <p class="prose-meditation"><em>Same brief, completely different orientation.</em></p>
+    </div>
+
+    <!-- Cognitive design research -->
+    <div class="prose-block reveal">
+      <h3 class="block-heading">Cognitive design research</h3>
+    </div>
+
+    <!-- Pull quote — the cognitive pillar moment -->
+    <aside class="pull-quote reveal">
+      <p>How design choices shape donation behavior is a cognitive question more than a visual one.</p>
+    </aside>
+
+    <div class="prose-block reveal">
+      <p>What someone perceives, what they remember, what they feel ready to act on.</p>
+      <p>I built a research document examining three layers. <strong>Visual components</strong>: which images actually move people toward giving — evocative over abstract, faces over logos. <strong>Layout structures</strong>: how content sequencing affects readiness — need first, then story, then specific ask. <strong>Wording</strong>: how language framing shapes urgency — immediate over ongoing, specific over abstract.</p>
+    </div>
+
+    <!-- Image: research document -->
+    <figure class="img-block reveal">
+      <img src="payfast-ci-research.png" alt="The cognitive design research document I built, examining how design choices affect donation behavior">
+      <figcaption>The research document.</figcaption>
+    </figure>
+
+    <div class="prose-block reveal">
+      <p>The research surfaced a principle worth naming: <em>donations can be driven by design.</em> Specific elements followed — clear and impactful mission statement, evocative imagery, urgent call-to-action language. These became the design ethos for every page that came after.</p>
+    </div>
+
+    <!-- Streamlining the navigation -->
+    <div class="prose-block reveal">
+      <h3 class="block-heading">Streamlining the navigation</h3>
+      <p>The original platform had All Causes, Popular Causes, and Causes by Region as three separate top-level navigation entries. <em>Three entry points for the same kind of thing.</em></p>
+      <p>I consolidated them under a single Causes nav with dropdown selection — same pages, one entry point instead of three.</p>
+    </div>
+
+    <!-- Image: user journey experimentation -->
+    <figure class="img-block reveal">
+      <img src="payfast-ci-journey.png" alt="User journey experimentation sketches comparing the original navigation with the redesigned single-Causes section navigation">
+      <figcaption>User journey experimentation — original vs. redesigned navigation.</figcaption>
+    </figure>
+
+    <!-- Two features -->
+    <div class="prose-block reveal">
+      <h3 class="block-heading">Two features from my own design thinking</h3>
+    </div>
+
+    <div class="feature-pair">
+      <div class="feature reveal">
+        <div class="feature-number">01</div>
+        <h4 class="feature-title">Registration</h4>
+        <p>The original had no way for merchants to register affiliated organizations. I designed a registration page from scratch.</p>
+        <p class="feature-meditation"><em>If a merchant has registered the cause they care about, the abstract "donate" becomes concrete.</em></p>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-number">02</div>
+        <h4 class="feature-title">All Causes, rebuilt</h4>
+        <p>The original required endless scrolling to find a specific cause and lacked organization. I rebuilt the page — causes organized alphabetically, with filters by type (animal welfare, health, education, research) and location.</p>
+        <p class="feature-meditation"><em>Recognition over recall.</em></p>
+      </div>
+    </div>
+
+    <!-- Image pair: registration + all causes -->
+    <div class="img-pair reveal">
+      <figure>
+        <img src="payfast-ci-register.png" alt="The redesigned Register page where merchants can register affiliated organizations">
+        <figcaption>Register page.</figcaption>
+      </figure>
+      <figure>
+        <img src="payfast-ci-allcauses.png" alt="The redesigned All Causes page with alphabetical organization and filters by cause type and region">
+        <figcaption>All Causes, rebuilt.</figcaption>
+      </figure>
+    </div>
+
+    <!-- Final designs -->
+    <div class="prose-block reveal">
+      <h3 class="block-heading">Final designs</h3>
+    </div>
+
+    <!-- Home as hero — the platform's entry point -->
+    <figure class="img-block reveal final-hero">
+      <img src="payfast-ci-home.png" alt="Final design — Home page of the redesigned Cause Index donation platform">
+      <figcaption>Home — the entry point.</figcaption>
+    </figure>
+
+    <!-- Six destination pages: three "browse" + three "act" -->
+    <div class="final-grid reveal">
+      <figure>
+        <img src="payfast-ci-popular.png" alt="Final design — Popular Causes page">
+        <figcaption>Popular Causes</figcaption>
+      </figure>
+      <figure>
+        <img src="payfast-ci-allcauses.png" alt="Final design — All Causes page, alphabetized with filters by type and region">
+        <figcaption>All Causes</figcaption>
+      </figure>
+      <figure>
+        <img src="payfast-ci-region.png" alt="Final design — Causes by Region page">
+        <figcaption>Causes by Region</figcaption>
+      </figure>
+      <figure>
+        <img src="payfast-ci-donation.png" alt="Final design — Donation page where merchants give to a selected cause">
+        <figcaption>Donation</figcaption>
+      </figure>
+      <figure>
+        <img src="payfast-ci-confirmation.png" alt="Final design — Payment Confirmation page">
+        <figcaption>Payment Confirmation</figcaption>
+      </figure>
+      <figure>
+        <img src="payfast-ci-register.png" alt="Final design — Register page where merchants register affiliated organizations">
+        <figcaption>Register</figcaption>
+      </figure>
+    </div>
+
+    <!-- Closing reflection -->
+    <div class="closing-reflection reveal">
+      <p>Looking back, this is the project where I first thought about design as a cognitive question. It was years before I named that as my practice — but the move was already there.</p>
+    </div>
+
+    <!-- Status -->
+    <div class="status-block reveal">
+      <div class="status-inner">
+        <div class="status-label">Status</div>
+        <p class="status-text">Selected as the final designs. The platform update was later shelved.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-left">
+      <div class="name">Myra Manekia</div>
+      <div class="copyright">© 2026 Myra Manekia</div>
+    </div>
+    <div class="footer-right">
+      <a href="https://www.linkedin.com/in/myra-manekia/" target="_blank" rel="noopener">LinkedIn ↗</a>
+      <a href="mailto:manekiamyra@gmail.com">manekiamyra@gmail.com</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Reading progress bar — thin terracotta line at top of viewport
+  const progress = document.getElementById('progress');
+  function updateProgress() {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    progress.style.width = pct + '%';
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  updateProgress();
+
+  // Nav shadow on scroll
+  const nav = document.querySelector('.nav');
+  const updateNav = () => nav.classList.toggle('scrolled', window.scrollY > 8);
+  window.addEventListener('scroll', updateNav, { passive: true });
+  updateNav();
+
+  // Reveal on scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Hero chevron trio — fires on load after hero animation completes
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.querySelector('.hero-chev-trio').classList.add('visible');
+    }, 1600);
+  });
+
+  // Animated counter — for the 80,000+ stat, eases up from 0
+  const counters = document.querySelectorAll('.counter');
+  const counterIO = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        const target = parseInt(el.dataset.target, 10);
+        const duration = 1800;
+        const start = performance.now();
+        function step(now) {
+          const t = Math.min((now - start) / duration, 1);
+          const eased = 1 - Math.pow(1 - t, 3); // ease-out cubic
+          el.textContent = Math.floor(eased * target).toLocaleString();
+          if (t < 1) requestAnimationFrame(step);
+          else el.textContent = target.toLocaleString();
+        }
+        requestAnimationFrame(step);
+        counterIO.unobserve(el);
+      }
+    });
+  }, { threshold: 0.4 });
+  counters.forEach(el => counterIO.observe(el));
+</script>
+
+</body>
+</html>

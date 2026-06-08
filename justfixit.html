@@ -1181,9 +1181,25 @@ img, svg { display: block; max-width: 100%; }
   font-size: 18px;
   line-height: 1.8;
 }
+
+/* ============================================================
+   READING PROGRESS BAR
+   ============================================================ */
+.progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  width: 0%;
+  height: 2px;
+  background: var(--accent);
+  z-index: 200;
+  transition: width 0.1s linear;
+}
 </style>
 </head>
 <body>
+
+<!-- Reading progress bar -->
+<div class="progress-bar" id="progress"></div>
 
 <!-- =========================================================
      NAV
@@ -1752,6 +1768,17 @@ img, svg { display: block; max-width: 100%; }
 </footer>
 
 <script>
+  // ──────────── Reading progress bar
+  const __pb_progress = document.getElementById('progress');
+  function __pb_update() {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    __pb_progress.style.width = pct + '%';
+  }
+  window.addEventListener('scroll', __pb_update, { passive: true });
+  __pb_update();
+
   // ──────────── Nav: scroll shadow + dark-mode while in Reckoning
   const nav = document.querySelector('.nav');
   const reckoning = document.getElementById('reckoning');

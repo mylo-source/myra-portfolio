@@ -813,10 +813,26 @@ a { color: inherit; text-decoration: none; }
   .nav-links a { font-size: 14px; }
   .footer-right { gap: var(--space-4); }
 }
+
+/* ============================================================
+   READING PROGRESS BAR
+   ============================================================ */
+.progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  width: 0%;
+  height: 2px;
+  background: var(--accent);
+  z-index: 200;
+  transition: width 0.1s linear;
+}
 </style>
 </head>
 
 <body>
+
+<!-- Reading progress bar -->
+<div class="progress-bar" id="progress"></div>
 
 <!-- =========================================================
      NAV
@@ -1122,6 +1138,17 @@ a { color: inherit; text-decoration: none; }
 </footer>
 
 <script>
+  // ──────────── Reading progress bar
+  const __pb_progress = document.getElementById('progress');
+  function __pb_update() {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    __pb_progress.style.width = pct + '%';
+  }
+  window.addEventListener('scroll', __pb_update, { passive: true });
+  __pb_update();
+
   // ──────────── Nav scroll shadow
   const nav = document.querySelector('.nav');
   const updateNav = () => nav.classList.toggle('scrolled', window.scrollY > 8);

@@ -382,6 +382,100 @@ img, svg { display: block; max-width: 100%; }
 }
 .work-card:hover .work-link::after { transform: translateX(2px); }
 
+/* ──────────── Internship Link Card ────────────
+   Compact entry point that signals "professional experience"
+   distinct from the case study cards. Background-tinted band,
+   centered typography, single link target. */
+.experience-link {
+  padding: var(--space-9) 0 var(--space-8);
+  background: var(--bg-subtle);
+  margin-top: var(--space-7);
+}
+.experience-link-inner {
+  display: block;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+  text-align: center;
+  cursor: pointer;
+}
+@media (min-width: 768px) { .experience-link-inner { padding: 0 var(--space-6); } }
+
+.experience-meta {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: var(--space-3);
+}
+.experience-title {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(32px, 3vw + 14px, 48px);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin-bottom: var(--space-4);
+  font-variation-settings: 'opsz' 60;
+  transition: color 0.4s var(--ease);
+}
+.experience-desc {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--text-muted);
+  margin-bottom: var(--space-5);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.experience-arrow {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  color: var(--text);
+  padding-bottom: 2px;
+  border-bottom: 1px solid var(--text);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.4s var(--ease), border-color 0.4s var(--ease), gap 0.4s var(--ease);
+}
+.arrow-glyph { transition: transform 0.4s var(--ease); }
+.experience-link-inner:hover .experience-title { color: var(--accent); }
+.experience-link-inner:hover .experience-arrow {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  gap: 10px;
+}
+.experience-link-inner:hover .arrow-glyph { transform: translateX(3px); }
+
+/* Chevron trio — Payfast brand mark, decorative accent above the button */
+.experience-chev-trio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+.experience-chev-trio .chev {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-top: 1.6px solid var(--text-muted);
+  border-right: 1.6px solid var(--text-muted);
+  transform: rotate(45deg);
+  opacity: 0.5;
+  transition: border-color 0.4s var(--ease), opacity 0.4s var(--ease);
+}
+.experience-link-inner:hover .experience-chev-trio .chev {
+  border-color: var(--accent);
+  opacity: 0.85;
+}
+
 /* ──────────── Footer ──────────── */
 .footer {
   margin-top: var(--space-7);
@@ -566,6 +660,25 @@ img, svg { display: block; max-width: 100%; }
         </article>
 
       </div>
+    </section>
+
+    <!-- =========================================================
+         INTERNSHIP LINK — compact entry point to internship.html
+         Styled distinctly from case study cards to signal:
+         this is professional experience, not thesis work.
+         ========================================================= -->
+    <section class="experience-link" aria-labelledby="experience-heading">
+      <a href="internship.html" class="experience-link-inner reveal">
+        <div class="experience-meta">Selected Internship Work · 2024</div>
+        <h2 class="experience-title" id="experience-heading">Payfast by Network</h2>
+        <p class="experience-desc">Two-month Product Design internship at South Africa's second-largest online payments platform. Two projects across product UI and service design.</p>
+        <div class="experience-chev-trio" aria-hidden="true">
+          <span class="chev"></span>
+          <span class="chev"></span>
+          <span class="chev"></span>
+        </div>
+        <span class="experience-arrow">View internship work <span class="arrow-glyph" aria-hidden="true">→</span></span>
+      </a>
     </section>
 
   </div>
