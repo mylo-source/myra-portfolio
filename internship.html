@@ -713,10 +713,9 @@ img, svg { display: block; max-width: 100%; }
 .reveal.visible { opacity: 1; transform: translateY(0); }
 
 /* ============================================================
-   FOOTER
+   FOOTER — matches pattern across all case studies
    ============================================================ */
 .footer {
-  margin-top: var(--space-8);
   background: var(--bg-subtle);
   padding: var(--space-6) 0;
   font-size: 14px;
@@ -725,23 +724,28 @@ img, svg { display: block; max-width: 100%; }
   max-width: var(--container-max);
   margin: 0 auto;
   padding: 0 var(--space-4);
-  display: flex;
+  display: flex; flex-direction: column;
+  gap: var(--space-3);
   justify-content: space-between;
-  align-items: center;
 }
-@media (min-width: 768px) { .footer-inner { padding: 0 var(--space-6); } }
-.footer .name { font-family: var(--font-serif); font-weight: 500; font-size: 15px; }
-.footer .copyright { color: var(--text-muted); font-size: 13px; margin-top: 2px; }
-.footer-right { display: flex; gap: var(--space-5); }
+@media (min-width: 768px) {
+  .footer-inner { padding: 0 var(--space-6); flex-direction: row; align-items: center; }
+}
+.footer-left .name { font-weight: 500; margin-bottom: 2px; }
+.footer-left .copyright { color: var(--text-muted); font-size: 13px; }
+.footer-right { display: flex; gap: var(--space-5); flex-wrap: wrap; }
 .footer-right a {
-  color: var(--text-muted);
+  color: var(--text); position: relative; padding: 2px 0;
   transition: color 0.3s var(--ease);
 }
-.footer-right a:hover { color: var(--accent); }
-
-@media (max-width: 600px) {
-  .footer-inner { flex-direction: column; gap: var(--space-4); align-items: flex-start; }
+.footer-right a::after {
+  content: ''; position: absolute; inset: auto 0 0 0;
+  height: 1px; background: currentColor;
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.45s var(--ease);
 }
+.footer-right a:hover { color: var(--accent); }
+.footer-right a:hover::after { transform: scaleX(1); }
 
 /* ============================================================
    FOCUS + REDUCED MOTION
@@ -999,8 +1003,8 @@ img, svg { display: block; max-width: 100%; }
 
     <!-- Image: user journey experimentation -->
     <figure class="img-block reveal">
-      <img src="payfast-ci-journey.png" alt="User journey experimentation sketches comparing the original navigation with the redesigned single-Causes section navigation">
-      <figcaption>User journey experimentation — original vs. redesigned navigation.</figcaption>
+      <img src="payfast-ci-journey.png" alt="The redesigned user journey for the Cause Index — showing the consolidated navigation flow from landing to donation">
+      <figcaption>User journey experimentation — the redesigned user journey.</figcaption>
     </figure>
 
     <!-- Two features -->
