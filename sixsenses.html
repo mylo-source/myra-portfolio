@@ -1303,6 +1303,12 @@ img, svg { display: block; max-width: 100%; }
 
   // ──────────── Easter egg
   console.log('%cdesigned with breath in mind.', 'font-family: Fraunces, serif; font-style: italic; color: #8B3A2E; font-size: 14px;');
+
+  // ──────────── Works scroll restoration
+  // Flag the homepage to restore scroll position when "Back to works" is clicked
+  document.querySelector('.back-link')?.addEventListener('click', () => {
+    try { sessionStorage.setItem('restoreWorksScroll', '1'); } catch (e) {}
+  });
 </script>
 
 </body>

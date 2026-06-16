@@ -1049,6 +1049,12 @@ img, svg, video { display: block; max-width: 100%; }
     });
   }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
   document.querySelectorAll('.reveal').forEach(el => revealIO.observe(el));
+
+  // ──────────── Works scroll restoration
+  // Flag the homepage to restore scroll position when "Back to works" is clicked
+  document.querySelector('.back-link')?.addEventListener('click', () => {
+    try { sessionStorage.setItem('restoreWorksScroll', '1'); } catch (e) {}
+  });
 </script>
 
 </body>

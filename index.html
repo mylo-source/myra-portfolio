@@ -699,6 +699,37 @@ img, svg { display: block; max-width: 100%; }
 
 <script>
   // ──────────────────────────────────────────
+  // Works scroll restoration — restores the user's
+  // scroll position when they return from a case study
+  // via "Back to works". Runs synchronously before paint
+  // so the page renders at the correct position.
+  // ──────────────────────────────────────────
+  (function () {
+    try {
+      const shouldRestore = sessionStorage.getItem('restoreWorksScroll');
+      const savedY = sessionStorage.getItem('worksScrollY');
+      if (shouldRestore === '1' && savedY !== null) {
+        const html = document.documentElement;
+        const prevBehavior = html.style.scrollBehavior;
+        html.style.scrollBehavior = 'auto';
+        window.scrollTo(0, parseInt(savedY, 10));
+        requestAnimationFrame(() => { html.style.scrollBehavior = prevBehavior; });
+      }
+      sessionStorage.removeItem('restoreWorksScroll');
+    } catch (e) {}
+  })();
+
+  // Save scrollY when a work card or internship link is clicked
+  (function () {
+    const workLinks = document.querySelectorAll('.works a, .experience-link-inner');
+    workLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        try { sessionStorage.setItem('worksScrollY', String(window.scrollY)); } catch (e) {}
+      });
+    });
+  })();
+
+  // ──────────────────────────────────────────
   // Intro setup — clear the typed elements BEFORE
   // the title renders, so user doesn't see a flash
   // of "(Cognitive)" before the animation starts.

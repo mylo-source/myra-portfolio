@@ -1295,6 +1295,12 @@ a { color: inherit; text-decoration: none; }
 
   // ──────────── Easter egg
   console.log('%cthe information traveled everywhere except the last few feet.', 'font-family: Fraunces, serif; font-style: italic; color: #8B3A2E; font-size: 14px;');
+
+  // ──────────── Works scroll restoration
+  // Flag the homepage to restore scroll position when "Back to works" is clicked
+  document.querySelector('.back-link')?.addEventListener('click', () => {
+    try { sessionStorage.setItem('restoreWorksScroll', '1'); } catch (e) {}
+  });
 </script>
 
 </body>
